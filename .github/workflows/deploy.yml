@@ -21,8 +21,8 @@ jobs:
 
     - name: Deploy to server
       run: |
-        ssh terry998877terry@34.80.219.26
-        "cd /home/travel_note/travel_note_frontend &&
-        git pull &&
-        cd /home/travel_note/travel_note_configs &&
+        ssh -o StrictHostKeyChecking=no -T terry998877terry@34.80.219.26 \
+        "cd /home/travel_note/travel_note_frontend && \
+        git pull && \
+        cd /home/travel_note/travel_note_configs && \
         sudo docker-compose -f docker-compose.prod.yml up --build -d"
