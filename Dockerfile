@@ -14,7 +14,7 @@ EXPOSE 5001
 CMD [ "npm", "run", "dev" ]
 
 # 階段 2: 建立生產環境
-FROM nginx:stable-alpine as build
+FROM node:16-alpine as build
 
 WORKDIR /app
 
