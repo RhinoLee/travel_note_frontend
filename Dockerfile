@@ -5,7 +5,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN apt-get update && apt-get install -y git && npm install
+RUN apt-get update && apt-get install -y git && apt-get install -y zsh && npm install
 
 COPY . .
 
