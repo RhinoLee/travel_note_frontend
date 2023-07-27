@@ -18,7 +18,7 @@
       </div>
     </div>
     <!-- login form section -->
-    <div class="bg-white">
+    <div class="bg-white pb-[30px]">
       <div class="flex flex-col items-center px-[24px] pt-0 h-full lg:pt-[18%]">
         <!-- logo -->
         <div class="hidden lg:block">
@@ -27,17 +27,31 @@
         <!-- login or register nav -->
         <nav class="mt-[44px] mb-[36px]">
           <ul class="flex justify-center items-center gap-[52px] text-3xl text-[--gray-color-1]">
-            <li class="cursor-pointer" :class="{ 'active-text': true, 'active-underline': true }">
+            <li
+              @click="changeRoute('login')"
+              class="cursor-pointer"
+              :class="{
+                'active-text': $route.name === 'login',
+                'active-underline': $route.name === 'login'
+              }"
+            >
               登入
             </li>
-            <li class="cursor-pointer" :class="{ 'active-text': false, 'active-underline': false }">
+            <li
+              @click="changeRoute('register')"
+              class="cursor-pointer"
+              :class="{
+                'active-text': $route.name === 'register',
+                'active-underline': $route.name === 'register'
+              }"
+            >
               註冊
             </li>
           </ul>
         </nav>
         <!-- form -->
         <div class="w-full">
-          <Form></Form>
+          <RouterView />
         </div>
       </div>
     </div>
@@ -45,7 +59,14 @@
 </template>
 
 <script setup lang="ts">
-import Form from './components/Form.vue'
+import { RouterView } from 'vue-router'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+function changeRoute(routesName: string) {
+  router.push({ name: routesName })
+}
 </script>
 
 <style scoped></style>
