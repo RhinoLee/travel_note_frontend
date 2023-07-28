@@ -43,7 +43,7 @@ async function registerHandler() {
         <span class="block text-base text-[var(--main-brand-color-1)] tracking-wider">名稱</span>
         <input
           type="text"
-          v-model="formData.name"
+          v-model.trim="formData.name"
           class="block border-[var(--gray-color-1)] mt-1 px-3 py-2 w-full h-[56px] rounded-md focus:border-[var(--main-brand-color-1)] focus:ring-[var(--main-brand-color-1)]"
         />
       </label>
@@ -54,7 +54,7 @@ async function registerHandler() {
         <span class="block text-base text-[var(--main-brand-color-1)] tracking-wider">信箱</span>
         <input
           type="text"
-          v-model="formData.email"
+          v-model.trim="formData.email"
           class="block border-[var(--gray-color-1)] mt-1 px-3 py-2 w-full h-[56px] rounded-md focus:border-[var(--main-brand-color-1)] focus:ring-[var(--main-brand-color-1)]"
         />
       </label>
@@ -65,7 +65,7 @@ async function registerHandler() {
         <span class="block text-base text-[var(--main-brand-color-1)] tracking-wider">密碼</span>
         <input
           type="text"
-          v-model="formData.password"
+          v-model.trim="formData.password"
           class="block border-[var(--gray-color-1)] mt-1 px-3 py-2 w-full h-[56px] rounded-md focus:border-[var(--main-brand-color-1)] focus:ring-[var(--main-brand-color-1)]"
         />
       </label>

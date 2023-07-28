@@ -6,3 +6,9 @@ export interface IRegisterParams {
   providerId?: null | string
   [key: string]: any
 }
+
+export interface ILoginParams {
+  email: string
+  password: string
+  [key: string]: string
+}
