@@ -19,7 +19,7 @@ FROM node:16-alpine as build
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci --only=production && npm install npm-run-all
 
 COPY . .
 RUN npm run build
