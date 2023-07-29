@@ -38,7 +38,7 @@ class AxiosRequest {
 
     this.instance.interceptors.response.use(
       (res: any) => {
-        return res.data
+        return res
       },
       (error: any) => {
         if (error.isAxiosError) {
@@ -55,7 +55,8 @@ class AxiosRequest {
   async request(config: AxiosRequestConfig) {
     try {
       const res = await this.instance.request(config)
-      return res
+
+      return { success: res.data.success, ...res.data.data }
     } catch (error: any) {
       if (error instanceof Error) {
         // This is a general Error

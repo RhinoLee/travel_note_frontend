@@ -8,9 +8,9 @@ const loginData: ILoginParams = reactive({
   password: ''
 })
 
-function loginHandler() {
+async function loginHandler() {
   const userStore = useUserStore()
-  userStore.loginAction(loginData)
+  const res = await userStore.loginAction(loginData)
 }
 </script>
 
