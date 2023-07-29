@@ -1,4 +1,6 @@
 import $axios from '@/services'
+import { localStore } from '@/utils/webStorage'
+import { LOGIN_TOKEN } from '@/common/constants'
 
 import type { IRegisterParams, ILoginParams } from './type'
 
@@ -15,3 +17,14 @@ export const loginAPI = (data: ILoginParams) => {
     data: { ...data }
   })
 }
+
+// export const testApi = (data: any) => {
+//   const token = localStore.getItem(LOGIN_TOKEN)
+//   return $axios.post({
+//     url: '/test',
+//     data: { ...data },
+//     headers: {
+//       Authorization: `Bearer ${token}`
+//     }
+//   })
+// }

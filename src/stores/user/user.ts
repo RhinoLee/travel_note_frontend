@@ -42,6 +42,13 @@ const useUserStore = defineStore({
       } catch (error) {
         console.log(error)
       }
+    },
+    async loadWebStorageAction() {
+      const token = localStore.getItem(LOGIN_TOKEN)
+      if (token) {
+        this.token = token
+        dynamicAddRoutes()
+      }
     }
   }
 })

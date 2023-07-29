@@ -2,5 +2,6 @@ export default {
   path: '/home',
   name: 'home',
   component: () => import('@/views/home/Home.vue'),
-  children: []
+  children: [],
+  meta: { requiresAuth: true }
 }

@@ -19,9 +19,7 @@ async function loginHandler() {
     <!-- form-item -->
     <div class="py-[10px] w-full">
       <label class="block">
-        <span class="block text-base text-[var(--main-brand-color-1)] tracking-wider"
-          >信箱 123</span
-        >
+        <span class="block text-base text-[var(--main-brand-color-1)] tracking-wider">信箱</span>
         <input
           type="text"
           v-model.trim="loginData.email"
