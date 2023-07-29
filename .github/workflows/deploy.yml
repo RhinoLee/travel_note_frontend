@@ -11,18 +11,19 @@ jobs:
     environment: production
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Setup SSH
-      uses: webfactory/ssh-agent@v0.5.3
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: Deploy to server
-      run: |
-        ssh -o StrictHostKeyChecking=no -T terry998877terry@34.80.219.26 \
-        "cd /home/travel_note/travel_note_frontend && \
-        git pull && \
-        cd /home/travel_note/travel_note_configs && \
-        sudo docker-compose -f docker-compose.prod.yml up --build -d"
+      - name: Deploy to server
+        run: |
+          ssh -o StrictHostKeyChecking=no -T terry998877terry@34.80.219.26 \
+          "cd /home/travel_note/travel_note_frontend && \
+          git pull && \
+          cd /home/travel_note/travel_note_configs && \
+          sudo docker-compose -f docker-compose.prod.yml down && \
+          sudo docker-compose -f docker-compose.prod.yml up --build -d"
