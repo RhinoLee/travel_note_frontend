@@ -1,29 +1,53 @@
 <script setup lang="ts">
-import { Loader } from '@googlemaps/js-api-loader'
-import { ref } from 'vue'
-import type { Ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import SchedulePanel from './components/schedulePanel/SchedulePanel.vue'
+import { useGoogleMapsLoader } from '@/composables/map/useGoogleMapsLoader'
+import { useGooglePlacesService } from '@/composables/map/useGooglePlacesService'
 
-const loader = new Loader({
-  apiKey: import.meta.env.VITE_APP_GOOGLE_MAPS_API_KEY,
-  version: 'weekly',
-  language: 'zh-TW',
-  region: 'TW'
-})
-
-const mapInstance: Ref<google.maps.Map | undefined> = ref(undefined)
 const mapDom = ref<HTMLDivElement | undefined>(undefined)
+const mapInstance = ref<google.maps.Map | null>(null)
 
-loader.load().then(async () => {
-  mapInstance.value = new google.maps.Map(mapDom.value as HTMLElement, {
-    center: { lat: 23.97565, lng: 120.9738819 },
-    zoom: 8
+onMounted(async () => {
+  mapInstance.value = await useGoogleMapsLoader(mapDom)
+  const taiwanCenter = new google.maps.LatLng(23.97565, 120.9738819)
+  const {
+    nearbySearchHandler,
+    getPlaceDetails,
+    searchResults,
+    clickedPlaceId,
+    clickedPlaceDetail
+  } = useGooglePlacesService(mapInstance.value)
+  const request = { location: taiwanCenter, radius: 500, query: '台東 牛肉麵' }
+  nearbySearchHandler(request)
+
+  watch(searchResults, (newVal) => {
+    console.log('searchResults newVal', newVal)
+  })
+
+  watch(clickedPlaceId, (newVal) => {
+    console.log('clickPlaceId newVal', newVal)
+    if (newVal) {
+      // call google place detail api
+      getPlaceDetails(newVal)
+    }
+  })
+
+  watch(clickedPlaceDetail, (newVal) => {
+    console.log('clickPlaceDetail newVal', newVal)
   })
 })
 </script>
 
 <template>
-  <div class="w-full h-full">
-    <div class="w-full h-full" ref="mapDom"></div>
+  <div class="grid grid-cols-[400px_1fr] w-full h-full">
+    <!-- panel -->
+    <div class="w-full h-full">
+      <SchedulePanel></SchedulePanel>
+    </div>
+    <!-- map -->
+    <div class="w-full h-full">
+      <div class="w-full h-full" ref="mapDom"></div>
+    </div>
   </div>
 </template>
 
