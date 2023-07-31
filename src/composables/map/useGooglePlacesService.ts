@@ -55,7 +55,7 @@ export function useGooglePlacesService(mapInstance: google.maps.Map) {
   const getPlaceDetails = (placeId: string) => {
     const request: google.maps.places.PlaceDetailsRequest = {
       placeId,
-      fields: ['name', 'formatted_address', 'place_id', 'geometry']
+      fields: ['name', 'formatted_address', 'place_id', 'geometry', 'opening_hours', 'photos']
     }
 
     service.getDetails(

@@ -2,6 +2,7 @@
 import { reactive } from 'vue'
 import { useGooglePlacesService } from '@/composables/map/useGooglePlacesService'
 import useMapStore from '@/stores/map/map'
+import DestinationPanel from './components/DestinationPanel.vue'
 
 const mapStore = useMapStore()
 const taiwanCenter = new google.maps.LatLng(23.97565, 120.9738819)
@@ -15,7 +16,8 @@ function searchPlaceHandler() {
 </script>
 
 <template>
-  <div class="px-[40px] py-[35px]">
+  <div class="relative px-[40px] py-[35px] h-full">
+    <DestinationPanel></DestinationPanel>
     <div
       class="flex items-center justify-center border border-[var(--main-brand-color-1)] py-[8px] px-[10px] rounded-lg"
     >
