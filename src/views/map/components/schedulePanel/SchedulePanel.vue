@@ -1,4 +1,18 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { reactive } from 'vue'
+import { useGooglePlacesService } from '@/composables/map/useGooglePlacesService'
+import useMapStore from '@/stores/map/map'
+
+const mapStore = useMapStore()
+const taiwanCenter = new google.maps.LatLng(23.97565, 120.9738819)
+const request = reactive({ location: taiwanCenter, radius: 500, query: '' })
+
+function searchPlaceHandler() {
+  if (!mapStore.getMap) return
+  const { nearbySearchHandler } = useGooglePlacesService(mapStore.getMap)
+  nearbySearchHandler(request)
+}
+</script>
 
 <template>
   <div class="px-[40px] py-[35px]">
@@ -16,6 +30,8 @@
           class="border-none px-[12px] w-full outline-0 focus:outline-0 focus:ring-0"
           type="text"
           placeholder="搜尋目的地"
+          v-model.trim="request.query"
+          @keyup.enter="searchPlaceHandler"
         />
       </div>
       <div class="cursor-pointer">

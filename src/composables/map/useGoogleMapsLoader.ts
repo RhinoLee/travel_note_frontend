@@ -1,7 +1,9 @@
-import { ref } from 'vue'
 import type { Ref } from 'vue'
 import { Loader } from '@googlemaps/js-api-loader'
+import useMapStore from '@/stores/map/map'
+const mapStore = useMapStore()
 
+// 掛載 Google Maps & Google Maps API 基本設定
 export async function useGoogleMapsLoader(mapElement: Ref<HTMLElement | undefined>) {
   const loader = new Loader({
     apiKey: import.meta.env.VITE_APP_GOOGLE_MAPS_API_KEY,
@@ -19,7 +21,5 @@ export async function useGoogleMapsLoader(mapElement: Ref<HTMLElement | undefine
     zoom: 8
   })
 
-  const mapInstance = ref<google.maps.Map>(map)
-
-  return mapInstance.value
+  mapStore.setMap(map)
 }

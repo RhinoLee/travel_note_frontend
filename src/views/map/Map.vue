@@ -3,46 +3,58 @@ import { ref, onMounted, watch } from 'vue'
 import SchedulePanel from './components/schedulePanel/SchedulePanel.vue'
 import { useGoogleMapsLoader } from '@/composables/map/useGoogleMapsLoader'
 import { useGooglePlacesService } from '@/composables/map/useGooglePlacesService'
+import useMapStore from '@/stores/map/map'
 
+interface GooglePlacesService {
+  nearbySearchHandler: (request: google.maps.places.TextSearchRequest) => void
+  getPlaceDetails: (placeId: string) => void
+}
+
+const mapStore = useMapStore()
 const mapDom = ref<HTMLDivElement | undefined>(undefined)
-const mapInstance = ref<google.maps.Map | null>(null)
+const googlePlacesService = ref<GooglePlacesService | null>(null)
 
 onMounted(async () => {
-  mapInstance.value = await useGoogleMapsLoader(mapDom)
-  const taiwanCenter = new google.maps.LatLng(23.97565, 120.9738819)
-  const {
-    nearbySearchHandler,
-    getPlaceDetails,
-    searchResults,
-    clickedPlaceId,
-    clickedPlaceDetail
-  } = useGooglePlacesService(mapInstance.value)
-  const request = { location: taiwanCenter, radius: 500, query: '台東 牛肉麵' }
-  nearbySearchHandler(request)
+  await useGoogleMapsLoader(mapDom)
 
-  watch(searchResults, (newVal) => {
+  if (mapStore.getMap) {
+    googlePlacesService.value = useGooglePlacesService(mapStore.getMap)
+  } else {
+    // 掛載失敗錯處理
+  }
+})
+
+watch(
+  () => mapStore.searchResults,
+  (newVal) => {
     console.log('searchResults newVal', newVal)
-  })
+  }
+)
 
-  watch(clickedPlaceId, (newVal) => {
+watch(
+  () => mapStore.clickedPlaceId,
+  (newVal) => {
     console.log('clickPlaceId newVal', newVal)
     if (newVal) {
       // call google place detail api
-      getPlaceDetails(newVal)
+      googlePlacesService.value?.getPlaceDetails(newVal)
     }
-  })
+  }
+)
 
-  watch(clickedPlaceDetail, (newVal) => {
+watch(
+  () => mapStore.clickedPlaceDetail,
+  (newVal) => {
     console.log('clickPlaceDetail newVal', newVal)
-  })
-})
+  }
+)
 </script>
 
 <template>
   <div class="grid grid-cols-[400px_1fr] w-full h-full">
     <!-- panel -->
     <div class="w-full h-full">
-      <SchedulePanel></SchedulePanel>
+      <SchedulePanel v-if="mapStore.getMap"></SchedulePanel>
     </div>
     <!-- map -->
     <div class="w-full h-full">

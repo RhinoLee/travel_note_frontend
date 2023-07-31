@@ -1,13 +1,11 @@
-import { ref } from 'vue'
+import useMapStore from '@/stores/map/map'
+const mapStore = useMapStore()
 
 export function useGooglePlacesService(mapInstance: google.maps.Map) {
   const service: google.maps.places.PlacesService = new google.maps.places.PlacesService(
     mapInstance
   )
   const infowindow: google.maps.InfoWindow = new google.maps.InfoWindow()
-  const searchResults = ref<google.maps.places.PlaceResult[] | null>(null)
-  const clickedPlaceId = ref<string>('')
-  const clickedPlaceDetail = ref<google.maps.places.PlaceResult | null>(null)
 
   const createMarker = (place: google.maps.places.PlaceResult) => {
     if (!place.geometry || !place.geometry.location) return
@@ -24,11 +22,15 @@ export function useGooglePlacesService(mapInstance: google.maps.Map) {
         map: mapInstance
       })
 
-      clickedPlaceId.value = place.place_id || ''
+      mapStore.setClickedPlaceId(place.place_id || '')
     })
+
+    mapStore.addMarker(marker)
   }
 
   const nearbySearchHandler = (request: google.maps.places.TextSearchRequest) => {
+    mapStore.deleteMarkers()
+
     service.textSearch(
       request,
       (
@@ -36,7 +38,7 @@ export function useGooglePlacesService(mapInstance: google.maps.Map) {
         status: google.maps.places.PlacesServiceStatus
       ) => {
         if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-          searchResults.value = results
+          mapStore.setSearchResults(results)
 
           for (let i = 0; i < results.length; i++) {
             createMarker(results[i])
@@ -44,7 +46,7 @@ export function useGooglePlacesService(mapInstance: google.maps.Map) {
 
           mapInstance.setCenter(results[0].geometry!.location!)
         } else {
-          searchResults.value = []
+          mapStore.setSearchResults([])
         }
       }
     )
@@ -64,11 +66,13 @@ export function useGooglePlacesService(mapInstance: google.maps.Map) {
       ) => {
         if (status === google.maps.places.PlacesServiceStatus.OK && place) {
           mapInstance.setCenter(place.geometry!.location!)
-          clickedPlaceDetail.value = place
+          mapStore.setClickedPlaceDetail(place)
+        } else {
+          mapStore.setClickedPlaceDetail(null)
         }
       }
     )
   }
 
-  return { nearbySearchHandler, getPlaceDetails, searchResults, clickedPlaceId, clickedPlaceDetail }
+  return { nearbySearchHandler, getPlaceDetails }
 }
