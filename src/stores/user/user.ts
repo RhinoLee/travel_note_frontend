@@ -14,6 +14,9 @@ interface IUserState {
 
 interface ILoginRes extends IUserState {
   success: boolean
+  data: {
+    token: string
+  }
 }
 
 const useUserStore = defineStore({
@@ -29,8 +32,8 @@ const useUserStore = defineStore({
         const res: ILoginRes = await loginAPI(params)
 
         if (res.success) {
-          this.token = res.token
-          localStore.setItem(LOGIN_TOKEN, res.token)
+          this.token = res.data.token
+          localStore.setItem(LOGIN_TOKEN, res.data.token)
 
           dynamicAddRoutes()
 

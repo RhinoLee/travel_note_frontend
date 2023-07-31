@@ -10,7 +10,7 @@ class AxiosRequest {
   constructor(config: any) {
     this.instance = axios.create({
       baseURL: BASE_URL,
-      timeout: 10000
+      timeout: 20000
     })
     // 可傳入 interceptors
     this.interceptors = config.interceptors
@@ -56,7 +56,7 @@ class AxiosRequest {
     try {
       const res = await this.instance.request(config)
 
-      return { success: res.data.success, ...res.data.data }
+      return { success: res.data.success, ...res.data }
     } catch (error: any) {
       if (error instanceof Error) {
         // This is a general Error

@@ -6,6 +6,7 @@ export function useGooglePlacesService(mapInstance: google.maps.Map) {
     mapInstance
   )
   const infowindow: google.maps.InfoWindow = new google.maps.InfoWindow()
+  const taiwanCenter = new google.maps.LatLng(23.97565, 120.9738819)
 
   const createMarker = (place: google.maps.places.PlaceResult) => {
     if (!place.geometry || !place.geometry.location) return
@@ -28,8 +29,11 @@ export function useGooglePlacesService(mapInstance: google.maps.Map) {
     mapStore.addMarker(marker)
   }
 
-  const nearbySearchHandler = (request: google.maps.places.TextSearchRequest) => {
-    mapStore.deleteMarkers()
+  const nearbySearchHandler = (
+    request: google.maps.places.TextSearchRequest,
+    deleteMarker: boolean = true
+  ) => {
+    if (deleteMarker) mapStore.deleteMarkers()
 
     service.textSearch(
       request,
@@ -74,5 +78,5 @@ export function useGooglePlacesService(mapInstance: google.maps.Map) {
     )
   }
 
-  return { nearbySearchHandler, getPlaceDetails }
+  return { nearbySearchHandler, getPlaceDetails, taiwanCenter }
 }

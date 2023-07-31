@@ -35,7 +35,7 @@ const { getClickedPlaceDetail } = storeToRefs(mapStore)
           class="mb-[20px] rounded-lg overflow-hidden"
         >
           <img
-            class="w-full min-h-[200px] object-cover object-center"
+            class="w-full max-h-[200px] object-cover object-center"
             :src="getClickedPlaceDetail.photos[0].getUrl()"
           />
         </div>

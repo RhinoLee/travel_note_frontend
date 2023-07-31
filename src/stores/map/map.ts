@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia'
 import { toRaw } from 'vue'
+import { completionAPI } from '@/services/open_ai'
+import { useGooglePlacesService } from '@/composables/map/useGooglePlacesService'
 
 interface IMapState {
   map: google.maps.Map | null
@@ -45,11 +47,13 @@ const useMapStore = defineStore({
         }
         if (this.clickedPlaceDetail.opening_hours?.periods) {
           this.clickedPlaceDetail.opening_hours.periods.forEach((period) => {
-            customOpeningHours.push({
-              day: weekdayMap[period.open.day] || undefined,
-              open: period.open?.hours + ':' + period.open?.minutes,
-              close: period.close?.hours + ':' + period.close?.minutes
-            })
+            if (period.open && period.close) {
+              customOpeningHours.push({
+                day: weekdayMap[period.open.day] || undefined,
+                open: period.open?.hours + ':' + period.open?.minutes,
+                close: period.close?.hours + ':' + period.close?.minutes
+              })
+            }
           })
         }
 
@@ -81,6 +85,31 @@ const useMapStore = defineStore({
     deleteMarkers() {
       this.hideMarkers()
       this.markers = []
+    },
+    async getOpenAPICompletion(gptInput: string) {
+      const { nearbySearchHandler, taiwanCenter } = useGooglePlacesService(this.map!)
+      try {
+        const result = await completionAPI(gptInput)
+        if (result.success) {
+          const allLocations: any[] = []
+
+          Object.keys(result.data).forEach((key: string) => {
+            console.log('result.data[key]', result.data[key])
+            result.data[key].forEach((locationStr: string) => {
+              allLocations.push(locationStr)
+            })
+          })
+
+          console.log('allLocations', allLocations)
+
+          for (const location of allLocations) {
+            const request = { location: taiwanCenter, radius: 500, query: location }
+            nearbySearchHandler(request, false)
+          }
+        }
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 })
