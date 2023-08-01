@@ -1,20 +1,31 @@
 <script setup lang="ts">
-import useMapStore from '@/stores/map/map'
+import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
+import useMapStore from '@/stores/map/map'
 
 const mapStore = useMapStore()
 const { getClickedPlaceDetail } = storeToRefs(mapStore)
+const isVisibled = ref(false)
+
+watch(getClickedPlaceDetail, (newVal) => {
+  if (!newVal) return
+  isVisibled.value = true
+})
+
+function closePanel() {
+  isVisibled.value = false
+}
 </script>
 
 <template>
   <div
-    v-if="getClickedPlaceDetail"
+    v-if="getClickedPlaceDetail && isVisibled"
     class="absolute left-[420px] top-[50%] translate-y-[-50%] w-[360px] h-[780px] bg-white rounded-lg z-20 overflow-hidden"
   >
     <div class="w-full h-full">
       <!-- panel header -->
       <header class="flex justify-between py-[10px] px-[20px] bg-[var(--green-color-1)]">
-        <button><img src="@/assets/images/icon/pure_cancel_icon.svg" /></button>
+        <button @click="closePanel"><img src="@/assets/images/icon/pure_cancel_icon.svg" /></button>
         <button
           class="flex items-center border border-[var(--main-brand-color-1)] py-[8px] px-[24px] text-[var(--main-brand-color-1)] rounded-lg"
         >

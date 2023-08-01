@@ -43,9 +43,9 @@ async function gptInputHandler() {
           @keyup.enter="gptInputHandler"
         />
       </div>
-      <div class="cursor-pointer">
+      <button @click="gptInput = ''" class="cursor-pointer">
         <img src="@/assets/images/icon/pure_cancel_icon.svg" alt="X" />
-      </div>
+      </button>
     </div>
     <!-- search google place -->
     <div
@@ -66,9 +66,9 @@ async function gptInputHandler() {
           @keyup.enter="searchPlaceHandler"
         />
       </div>
-      <div class="cursor-pointer">
+      <button @click="request.query = ''">
         <img src="@/assets/images/icon/pure_cancel_icon.svg" alt="X" />
-      </div>
+      </button>
     </div>
     <div class="flex items-center mt-[8px]">
       <img class="mr-[6px]" src="@/assets/images/icon/motor_icon.svg" />
