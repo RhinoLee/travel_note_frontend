@@ -13,6 +13,12 @@
     --dark-color-1: #232d23;
     --blue-color-1: #1080bf;
     --green-color-1: #f0f1e9;
+    /* date-picker */
+    .dp__theme_light {
+      --dp-border-radius: 0.375rem;
+      --dp-text-color: var(--dark-color-1);
+      --dp-border-color: var(--gray-color-1);
+    }
   }
 }
 
@@ -21,7 +27,10 @@
     color: var(--main-brand-color-1);
   }
   .active-underline {
-    border-bottom: 2px solid var(--main-brand-color-2);
+    @apply border-b-2 border-[var(--main-brand-color-2)];
+  }
+  .form-modal-label {
+    @apply block mb-[8px] text-base text-[var(--main-brand-color-1)] tracking-wider;
   }
 }
 
