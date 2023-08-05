@@ -4,13 +4,21 @@ import FormModal from '@/components/common/formModal/FormModal.vue'
 import useFormModal from '@/composables/modal/useFormModal'
 import { formFields, schema } from './config/formFields'
 import useTripsStore from '@/stores/trips/trips'
+import { notify } from '@kyvg/vue3-notification'
 
 async function createSubmitHandler(data: any) {
   // 整理 data 成 API 所需格式
-  console.log('整理 data 成 API 所需格式', data)
   const tripsStore = useTripsStore()
   tripsStore.setCreateData(data)
-  await tripsStore.createTrip()
+  try {
+    await tripsStore.createTrip()
+    tripsStore.setCreateData(null)
+    notify({ type: 'success', text: '新增旅程成功' })
+  } catch (error) {
+    notify({ type: 'error', text: '新增旅程失敗' })
+  }
+
+  formMadalRef.value?.setModalVisible()
 }
 
 function updateSubmitHandler(data: any) {

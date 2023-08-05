@@ -141,7 +141,8 @@ defineExpose({
                   :id="formField.prop"
                   v-model="formData[formField.prop]"
                   :teleport="true"
-                  @closed="validateField(formField.prop)"
+                  @closed="validateField(formField.prop, formField.refFields)"
+                  @cleared="validateField(formField.prop, formField.refFields)"
                 ></VueDatePicker>
                 <p class="text-red-500">{{ errors[formField.prop] }}</p>
               </div>

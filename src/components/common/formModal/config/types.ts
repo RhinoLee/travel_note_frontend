@@ -1,11 +1,12 @@
 import type { ObjectSchema } from 'yup'
 
-interface IFormField {
+export interface IFormField {
   prop: string
   title: string
   type: string
   placeholder: string
   initValue: any
+  refFields: Array<string>
 }
 
 export interface IModalProps {

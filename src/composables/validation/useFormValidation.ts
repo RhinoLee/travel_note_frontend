@@ -34,8 +34,6 @@ export function useFormValidation<T extends AnyObject>(schema: ObjectSchema<T>, 
       await schema.validate(data, { abortEarly: false })
     } catch (err) {
       if (err instanceof ValidationError) {
-        console.log('validate error', err)
-        console.log('err.inner', err.inner)
         err.inner.forEach((errItem) => {
           if (errItem && errItem.path) {
             errors[errItem.path] = errItem.message
@@ -52,15 +50,19 @@ export function useFormValidation<T extends AnyObject>(schema: ObjectSchema<T>, 
    *  驗證單一欄位
    *  @field - 傳入要驗證的欄位的 prop
    */
-  async function validateField(field: keyof T) {
-    if (!(field in data)) return
-
+  async function validateField(field: keyof T, refFields: Array<keyof T | null> = []) {
     try {
+      // 檢查指定欄位
       await schema.validateAt(field as string, data)
       errors[field as string] = ''
+      // 檢查指定欄位的 ref 欄位
+      for (let i = 0; i < refFields.length; i++) {
+        await schema.validateAt(refFields[i] as string, data)
+        errors[refFields[i] as string] = ''
+      }
     } catch (err) {
       if (err instanceof ValidationError) {
-        errors[field as string] = err.message
+        errors[err.path as string] = err.message
       } else {
         console.log(err)
       }
