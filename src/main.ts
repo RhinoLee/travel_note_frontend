@@ -7,11 +7,13 @@ import App from './App.vue'
 import router from './router'
 
 import Notifications from '@kyvg/vue3-notification'
+import VueUploadComponent from 'vue-upload-component/src/FileUpload.vue'
 
 const app = createApp(App)
 
 app.use(registerPinia)
 app.use(router)
 app.use(Notifications)
+app.component('file-upload', VueUploadComponent)
 
 app.mount('#app')

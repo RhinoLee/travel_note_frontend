@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import ScheduleList from './components/ScheduleList.vue'
-import FormModal from '@/components/common/FormModal.vue'
+import FormModal from '@/components/common/formModal/FormModal.vue'
 import useFormModal from '@/composables/modal/useFormModal'
-import { formFields } from './config/formFields'
+import { formFields, schema } from './config/formFields'
+import useTripsStore from '@/stores/trips/trips'
 
-function createSubmitHandler(data: any) {
-  console.log('createSubmitHandler', data)
+async function createSubmitHandler(data: any) {
+  // 整理 data 成 API 所需格式
+  console.log('整理 data 成 API 所需格式', data)
+  const tripsStore = useTripsStore()
+  tripsStore.setCreateData(data)
+  await tripsStore.createTrip()
 }
 
 function updateSubmitHandler(data: any) {
@@ -36,6 +41,7 @@ const { formMadalRef, createClickHandler } = useFormModal()
       ref="formMadalRef"
       modalTitle="新增旅程"
       :formFields="formFields"
+      :schema="schema"
       @createSubmit="createSubmitHandler"
       @updateSubmit="updateSubmitHandler"
     >

@@ -2,29 +2,16 @@
 import { toRaw, reactive, ref } from 'vue'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+import { useFileUpload } from '@/composables/fileUpload/useFileUpload'
+import { useFormValidation } from '@/composables/validation/useFormValidation'
+import type { IModalProps, IFormModalData } from './config/types'
 
-export interface IFormField {
-  prop: string
-  title: string
-  type: string
-  placeholder: string
-  rules: any[]
-  initValue: any
-}
-
-export interface IModalProps {
-  modalTitle: string
-  modalBanner?: string
-  formFields: IFormField[]
-}
-
-export interface IFormData {
-  [key: string]: string
-}
+// 這個組件會透過上層 formFields 配置文件，來產生對應的表單欄位
+// 這個組件不做客製化資料處理，需要在上層組件中，自行處理資料格式
 
 const emit = defineEmits<{
-  updateSubmit: [data: IFormData]
-  createSubmit: [data: IFormData]
+  updateSubmit: [data: IFormModalData]
+  createSubmit: [data: IFormModalData]
 }>()
 
 const props = withDefaults(defineProps<IModalProps>(), {
@@ -35,11 +22,11 @@ const isCreateModal = ref(true)
 const editData = ref()
 const buttonText = ref('')
 
-const initialFormData: IFormData = {}
+const initialFormData: IFormModalData = {}
 for (const formItem of props.formFields) {
   initialFormData[formItem.prop] = formItem.initValue ?? ''
 }
-const formData: IFormData = reactive(initialFormData)
+const formData: IFormModalData = reactive(initialFormData)
 
 const isModalVisible = ref(false)
 function closeModal() {
@@ -71,12 +58,24 @@ function setModalVisible(isCreate: boolean = true, itemData: any = {}) {
   }
 }
 
-function submitHandler() {
-  // 編輯模式
-  if (!isCreateModal.value && editData.value) {
-    emit('updateSubmit', toRaw(formData))
-  } else {
-    emit('createSubmit', toRaw(formData))
+// file upload
+const { previewFile, inputFile, inputFilter, upload } = useFileUpload()
+
+// 驗證規則
+const { errors, validate, validateField } = useFormValidation(props.schema, formData)
+
+// modal submit
+async function submitHandler() {
+  try {
+    await validate()
+    // 編輯模式
+    if (!isCreateModal.value && editData.value) {
+      emit('updateSubmit', toRaw(formData))
+    } else {
+      emit('createSubmit', toRaw(formData))
+    }
+  } catch (err) {
+    console.log('submitHandler err', err)
   }
 }
 
@@ -102,16 +101,37 @@ defineExpose({
             <img src="@/assets/images/icon/cancel_icon.svg" alt="close" />
           </button>
         </header>
+        <div v-if="previewFile && previewFile.blob">
+          <img :src="previewFile.blob" class="w-full max-h-[230px] object-cover object-center" />
+        </div>
         <div class="mx-auto px-[20px] py-[15px] min-h-[100px] space-y-[20px]">
           <div v-for="formField in formFields" :key="formField.prop">
+            <template v-if="formField.type === 'singleFile'">
+              <label class="form-modal-label" :for="formField.prop">{{ formField.title }}</label>
+              <file-upload
+                ref="upload"
+                v-model="formData[formField.prop]"
+                @input-file="inputFile"
+                @input-filter="inputFilter"
+              >
+                <button
+                  class="ml-auto px-[20px] py-[6px] bg-[var(--main-brand-color-1)] text-white text-xs md:text-sm rounded-lg"
+                >
+                  上傳圖片
+                </button>
+              </file-upload>
+            </template>
             <template v-if="formField.type === 'text'">
               <div>
                 <label class="form-modal-label" :for="formField.prop">{{ formField.title }}</label>
                 <input
                   type="text"
                   v-model.trim="formData[formField.prop]"
+                  @input="validateField(formField.prop)"
+                  @blur="validateField(formField.prop)"
                   class="block border-[var(--gray-color-1)] mt-1 px-3 py-2 w-full h-[36px] rounded-md"
                 />
+                <p class="text-red-500">{{ errors[formField.prop] }}</p>
               </div>
             </template>
             <template v-if="formField.type === 'date'">
@@ -121,7 +141,9 @@ defineExpose({
                   :id="formField.prop"
                   v-model="formData[formField.prop]"
                   :teleport="true"
+                  @closed="validateField(formField.prop)"
                 ></VueDatePicker>
+                <p class="text-red-500">{{ errors[formField.prop] }}</p>
               </div>
             </template>
           </div>
@@ -140,3 +162,4 @@ defineExpose({
 </template>
 
 <style lang="less" scoped></style>
+./config
