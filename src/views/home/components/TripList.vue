@@ -9,14 +9,20 @@ const tripsStore = useTripsStore()
 const { currentPage, totalSize, totalPages, limit, setPageParams, goToPage, nextPage, prevPage } =
   usePagination(tripsStore.getTripsAction)
 
+async function getTripsHandler() {
+  const data = await tripsStore.getTripsAction({ page: currentPage.value, limit: limit.value })
+  setPageParams(data.pagination)
+}
+
 onMounted(async () => {
   try {
-    const data = await tripsStore.getTripsAction({ page: currentPage.value, limit: limit.value })
-    setPageParams(data.pagination)
+    await getTripsHandler()
   } catch (err) {
     console.log(err)
   }
 })
+
+defineExpose({ getTripsHandler })
 </script>
 
 <template>

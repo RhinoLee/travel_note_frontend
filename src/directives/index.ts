@@ -12,6 +12,10 @@ function registerGlobalDirective(app: App) {
       }
 
       el.addEventListener('error', onErrorHandler)
+
+      if (!el.src) {
+        el.src = binding.value || defaultImage
+      }
     }
   })
 }

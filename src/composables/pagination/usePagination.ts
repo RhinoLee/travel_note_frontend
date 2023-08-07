@@ -10,7 +10,7 @@ export function usePagination(fetchDataFn: ({ page, limit }: IListParams) => Pro
   const currentPage: Ref<number> = ref(1)
   const totalSize: Ref<number> = ref(0)
   const totalPages: Ref<number> = ref(0)
-  const limit: Ref<number> = ref(1)
+  const limit: Ref<number> = ref(3)
 
   async function fetchPage(page: number) {
     const data = await fetchDataFn({ page, limit: limit.value })
@@ -20,7 +20,6 @@ export function usePagination(fetchDataFn: ({ page, limit }: IListParams) => Pro
   function setPageParams(pagination: IListResPage) {
     totalSize.value = pagination.totalSize
     totalPages.value = pagination.totalPages
-    currentPage.value = pagination.page
     currentPage.value = pagination.page
     limit.value = pagination.limit
   }
