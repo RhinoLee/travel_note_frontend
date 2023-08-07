@@ -1,10 +1,16 @@
 import { defineStore } from 'pinia'
 import dayjs from 'dayjs'
-import type { ITripParams } from '@/services/trips/type'
-import { createTripAPI } from '@/services/trips'
+import { createTripAPI, getTripsApi } from '@/services/trips'
+import type {
+  ITripParams,
+  IListItem,
+  IListResItem,
+  IListParams,
+  IListRes
+} from '@/services/trips/type'
 
 interface IState {
-  trips: any[]
+  trips: Array<IListItem>
   createData: ITripParams | null
 }
 
@@ -39,6 +45,9 @@ const useTripsStore = defineStore({
       })
 
       return formData
+    },
+    getTrips(): Array<IListItem> {
+      return this.trips
     }
   },
   actions: {
@@ -49,6 +58,24 @@ const useTripsStore = defineStore({
       // use getCreateData to call api
       try {
         const result = await createTripAPI(this.getCreateData)
+        return result
+      } catch (err) {
+        console.log(err)
+        throw err
+      }
+    },
+    async getTripsAction(params: IListParams) {
+      try {
+        const result: IListRes = await getTripsApi(params)
+        this.trips = result.data.map((item: IListResItem) => {
+          return {
+            id: item.id,
+            name: item.name,
+            imageUrl: item.image_url,
+            startDate: item.start_date,
+            endDate: item.end_date
+          }
+        })
         return result
       } catch (err) {
         console.log(err)

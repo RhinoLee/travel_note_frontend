@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ScheduleList from './components/ScheduleList.vue'
+import TripList from './components/TripList.vue'
 import FormModal from '@/components/common/formModal/FormModal.vue'
 import useFormModal from '@/composables/modal/useFormModal'
 import { formFields, schema } from './config/formFields'
@@ -42,7 +42,7 @@ const { formMadalRef, createClickHandler } = useFormModal()
       </button>
     </div>
     <!-- schedule list -->
-    <ScheduleList></ScheduleList>
+    <TripList></TripList>
 
     <!-- create/edit Modal -->
     <FormModal
