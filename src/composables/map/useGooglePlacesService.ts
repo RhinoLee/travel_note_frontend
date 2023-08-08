@@ -22,6 +22,7 @@ export function useGooglePlacesService(mapInstance: google.maps.Map) {
         anchor: marker,
         map: mapInstance
       })
+      console.log('place.place_id', place.place_id)
 
       mapStore.setClickedPlaceId(place.place_id || '')
     })

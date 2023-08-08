@@ -7,6 +7,10 @@ export interface IFormField {
   placeholder: string
   initValue: any
   refFields: Array<string>
+  yearsRange?: Array<number>
+  minDate?: string
+  maxDate?: string
+  enableTimePicker?: boolean
 }
 
 export interface IModalProps {

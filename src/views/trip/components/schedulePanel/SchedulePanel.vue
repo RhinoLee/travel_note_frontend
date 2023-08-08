@@ -2,10 +2,14 @@
 import { ref, reactive } from 'vue'
 import { useGooglePlacesService } from '@/composables/map/useGooglePlacesService'
 import useMapStore from '@/stores/map/map'
-import DestinationPanel from './components/DestinationPanel.vue'
+
+defineEmits(['addDestinationBtnClick'])
 
 const mapStore = useMapStore()
-const request = reactive<google.maps.places.TextSearchRequest>({ radius: 500, query: '' })
+const request = reactive<google.maps.places.TextSearchRequest>({
+  radius: 500,
+  query: '台東森林公園'
+})
 
 function searchPlaceHandler() {
   if (!mapStore.getMap) return
@@ -23,7 +27,7 @@ async function gptInputHandler() {
 
 <template>
   <div class="relative px-[40px] py-[35px] h-full">
-    <DestinationPanel></DestinationPanel>
+    <slot></slot>
     <!-- gpt input -->
     <div
       class="flex items-center justify-center border border-[var(--main-brand-color-1)] mb-[20px] py-[8px] px-[10px] rounded-lg"
@@ -36,7 +40,7 @@ async function gptInputHandler() {
       </div>
       <div class="grow">
         <input
-          class="border-none px-[12px] w-full outline-0 focus:outline-0 focus:ring-0"
+          class="border-none px-[12px] w-full0"
           type="text"
           placeholder="gpt input"
           v-model.trim="gptInput"
@@ -59,7 +63,7 @@ async function gptInputHandler() {
       </div>
       <div class="grow">
         <input
-          class="border-none px-[12px] w-full outline-0 focus:outline-0 focus:ring-0"
+          class="border-none px-[12px] w-full"
           type="text"
           placeholder="搜尋目的地"
           v-model.trim="request.query"

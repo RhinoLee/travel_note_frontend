@@ -19,25 +19,25 @@ export const formFields = [
     refFields: []
   },
   {
-    prop: 'startDate',
+    prop: 'start_date',
     title: '開始日期',
     type: 'date',
     placeholder: '請選擇開始日期',
     initValue: dayjs(),
-    refFields: ['endDate']
+    refFields: ['end_date']
   },
   {
-    prop: 'endDate',
+    prop: 'end_date',
     title: '結束日期',
     type: 'date',
     placeholder: '請選擇結束日期',
     initValue: dayjs(),
-    refFields: ['startDate']
+    refFields: ['start_date']
   }
 ]
 
 export const schema = object().shape({
   title: string().required('請輸入名稱'),
-  startDate: date().required('請選擇日期').max(ref('endDate'), '開始時間需小於結束時間'),
-  endDate: date().required('請選擇日期').min(ref('startDate'), '結束時間需大於開始時間')
+  start_date: date().required('請選擇日期').max(ref('end_date'), '開始時間需小於結束時間'),
+  end_date: date().required('請選擇日期').min(ref('start_date'), '結束時間需大於開始時間')
 })

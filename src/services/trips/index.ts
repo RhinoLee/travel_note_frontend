@@ -1,6 +1,6 @@
 import $axios from '@/services'
 import useUserStore from '@/stores/user/user'
-import type { IListParams } from './type'
+import type { IListParams, IDayTripParams } from './type'
 
 const userStore = useUserStore()
 
@@ -21,6 +21,27 @@ export const getTripsApi = ({ limit, page }: IListParams) => {
 
   return $axios.get({
     url: `/trip/list?limit=${limit}&page=${page}`,
+    headers: {
+      Authorization: `Bearer ${userStore.token}`
+    }
+  })
+}
+
+export const getTripApi = (tripId: string) => {
+  if (!userStore.token) return new Error('token is null')
+
+  return $axios.get({
+    url: `/trip?tripId=${tripId}`,
+    headers: {
+      Authorization: `Bearer ${userStore.token}`
+    }
+  })
+}
+
+export const createTripDayApi = (data: IDayTripParams) => {
+  return $axios.post({
+    url: `/trip/${data.tripId}`,
+    data,
     headers: {
       Authorization: `Bearer ${userStore.token}`
     }

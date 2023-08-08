@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toRaw, reactive, ref } from 'vue'
+import { toRaw, reactive, ref, watch, watchEffect } from 'vue'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { useFileUpload } from '@/composables/fileUpload/useFileUpload'
@@ -26,12 +26,24 @@ const initialFormData: IFormModalData = {}
 for (const formItem of props.formFields) {
   initialFormData[formItem.prop] = formItem.initValue ?? ''
 }
+// template v-model 表單資料
 const formData: IFormModalData = reactive(initialFormData)
 
+// 上層 formFields 改變時，更新 formData init value
+watch(
+  () => props.formFields,
+  () => {
+    for (const formItem of props.formFields) {
+      formData[formItem.prop] = formItem.initValue ?? ''
+    }
+  },
+  { immediate: true, deep: true }
+)
+
+// 驗證規則
+const { errors, validate, validateField, clearErrors } = useFormValidation(props.schema, formData)
+
 const isModalVisible = ref(false)
-function closeModal() {
-  isModalVisible.value = false
-}
 
 /**
  * 設定 Modal 的顯示狀態 & 對應資料顯示
@@ -56,13 +68,12 @@ function setModalVisible(isCreate: boolean = true, itemData: any = {}) {
       props.formFields.find((formField) => formField.prop === key)?.initValue ?? ''
     }
   }
+
+  if (!isModalVisible.value) clearErrors()
 }
 
 // file upload
 const { previewFile, inputFile, inputFilter, upload } = useFileUpload()
-
-// 驗證規則
-const { errors, validate, validateField } = useFormValidation(props.schema, formData)
 
 // modal submit
 async function submitHandler() {
@@ -85,8 +96,8 @@ defineExpose({
 </script>
 
 <template>
-  <div v-if="isModalVisible" class="fixed top-0 left-0 w-full h-full bg-black/10 z-10">
-    <div @click.self="closeModal" class="relative w-full h-full">
+  <div v-if="isModalVisible" class="fixed top-0 left-0 w-full h-full bg-black/10 z-50">
+    <div @click.self="(event) => setModalVisible()" class="relative w-full h-full">
       <div
         class="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-[300px] md:w-[530px] bg-white rounded-lg overflow-hidden shadow-lg overflow-y-auto"
       >
@@ -95,7 +106,7 @@ defineExpose({
         >
           <h4 class="text-lg md:text-xl">{{ props.modalTitle }}</h4>
           <button
-            @click="closeModal"
+            @click="(event) => setModalVisible()"
             class="flex items-center justify-center ml-auto w-[24px] h-[24px] text-lg md:text-xl"
           >
             <img src="@/assets/images/icon/cancel_icon.svg" alt="close" />
@@ -138,8 +149,26 @@ defineExpose({
               <div>
                 <label class="form-modal-label" :for="formField.prop">{{ formField.title }}</label>
                 <VueDatePicker
-                  :id="formField.prop"
                   v-model="formData[formField.prop]"
+                  :id="formField.prop"
+                  :year-range="formField.yearsRange || undefined"
+                  :min-date="formField.minDate || undefined"
+                  :max-date="formField.maxDate || undefined"
+                  :enable-time-picker="formField.enableTimePicker"
+                  :teleport="true"
+                  @closed="validateField(formField.prop, formField.refFields)"
+                  @cleared="validateField(formField.prop, formField.refFields)"
+                ></VueDatePicker>
+                <p class="text-red-500">{{ errors[formField.prop] }}</p>
+              </div>
+            </template>
+            <template v-if="formField.type === 'time'">
+              <div>
+                <label class="form-modal-label" :for="formField.prop">{{ formField.title }}</label>
+                <VueDatePicker
+                  time-picker
+                  v-model="formData[formField.prop]"
+                  :id="formField.prop"
                   :teleport="true"
                   @closed="validateField(formField.prop, formField.refFields)"
                   @cleared="validateField(formField.prop, formField.refFields)"

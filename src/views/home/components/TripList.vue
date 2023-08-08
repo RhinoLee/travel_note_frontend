@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
 import useTripsStore from '@/stores/trips/trips'
 import Pagination from '@/components/common/Pagination.vue'
 import { usePagination } from '@/composables/pagination/usePagination'
+import type { IListItem } from '@/services/trips/type'
 
 const tripsStore = useTripsStore()
 const { currentPage, totalSize, totalPages, limit, setPageParams, goToPage, nextPage, prevPage } =
@@ -12,6 +13,12 @@ const { currentPage, totalSize, totalPages, limit, setPageParams, goToPage, next
 async function getTripsHandler() {
   const data = await tripsStore.getTripsAction({ page: currentPage.value, limit: limit.value })
   setPageParams(data.pagination)
+}
+
+const router = useRouter()
+function goToTrip(trip: IListItem) {
+  tripsStore.setCurrentTrip(trip)
+  router.push({ name: 'trip', params: { tripId: trip.id } })
 }
 
 onMounted(async () => {
@@ -32,26 +39,27 @@ defineExpose({ getTripsHandler })
   >
     <!-- schedule item -->
     <div
-      v-for="schedule in tripsStore.trips"
-      :key="schedule.id"
-      class="flex flex-col bg-white shadow-green rounded-md overflow-hidden"
+      v-for="trip in tripsStore.trips"
+      :key="trip.id"
+      class="flex flex-col bg-white shadow-green rounded-md overflow-hidden cursor-pointer"
+      @click="goToTrip(trip)"
     >
-      <!-- schedule pic -->
+      <!-- trip pic -->
       <div>
         <img
           v-default-image="null"
-          :src="schedule.imageUrl"
+          :src="trip.imageUrl"
           class="w-full h-[200px] object-cover object-center"
         />
       </div>
       <div class="px-[24px] py-[12px] md:py-[20px]">
-        <!-- schedule title -->
-        <h3 class="text-[var(--dark-color-1)] text-base tracking-wide">{{ schedule.name }}</h3>
-        <!-- schedule date -->
+        <!-- trip title -->
+        <h3 class="text-[var(--dark-color-1)] text-base tracking-wide">{{ trip.name }}</h3>
+        <!-- trip date -->
         <div class="mt-[12px] text-[var(--main-brand-color-1)] text-xs tracking-wide">
-          <span>{{ schedule.startDate }}</span>
+          <span>{{ trip.start_date }}</span>
           <span>~</span>
-          <span>{{ schedule.endDate }}</span>
+          <span>{{ trip.end_date }}</span>
         </div>
       </div>
     </div>

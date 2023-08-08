@@ -27,8 +27,10 @@ export function useFormValidation<T extends AnyObject>(schema: ObjectSchema<T>, 
     }
     此結構允許我們在每個輸入欄位下方動態顯示對應的錯誤訊息，讓使用者了解並修正錯誤。
   */
+
   const errors = reactive<IErrors>({})
 
+  // 驗證 data 所有欄位
   async function validate() {
     try {
       await schema.validate(data, { abortEarly: false })
@@ -47,19 +49,28 @@ export function useFormValidation<T extends AnyObject>(schema: ObjectSchema<T>, 
   }
 
   /**
-   *  驗證單一欄位
+   *  驗證指定單一欄位
    *  @field - 傳入要驗證的欄位的 prop
+   *  @refFields - 傳入要連帶驗證的欄位
    */
   async function validateField(field: keyof T, refFields: Array<keyof T | null> = []) {
+    console.log('validateField', refFields)
+
     try {
       // 檢查指定欄位
       await schema.validateAt(field as string, data)
       errors[field as string] = ''
       // 檢查指定欄位的 ref 欄位
-      for (let i = 0; i < refFields.length; i++) {
-        await schema.validateAt(refFields[i] as string, data)
-        errors[refFields[i] as string] = ''
-      }
+      // for (let i = 0; i < refFields.length; i++) {
+      //   await schema.validateAt(refFields[i] as string, data)
+      //   errors[refFields[i] as string] = ''
+      // }
+      const validationPromises = refFields.map(async (refField) => {
+        await schema.validateAt(refField as string, data)
+        errors[refField as string] = ''
+      })
+
+      await Promise.all(validationPromises)
     } catch (err) {
       if (err instanceof ValidationError) {
         errors[err.path as string] = err.message
@@ -69,5 +80,12 @@ export function useFormValidation<T extends AnyObject>(schema: ObjectSchema<T>, 
     }
   }
 
-  return { errors, validate, validateField }
+  // 清空 errors
+  function clearErrors() {
+    Object.keys(errors).forEach((key) => {
+      errors[key] = ''
+    })
+  }
+
+  return { errors, validate, validateField, clearErrors }
 }

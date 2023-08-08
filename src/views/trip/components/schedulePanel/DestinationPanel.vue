@@ -3,6 +3,8 @@ import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import useMapStore from '@/stores/map/map'
 
+defineEmits(['addDestinationBtnClick'])
+
 const mapStore = useMapStore()
 const { getClickedPlaceDetail } = storeToRefs(mapStore)
 const isVisibled = ref(false)
@@ -14,6 +16,8 @@ watch(getClickedPlaceDetail, (newVal) => {
 
 function closePanel() {
   isVisibled.value = false
+  mapStore.setClickedPlaceId('')
+  mapStore.setClickedPlaceDetail(null)
 }
 </script>
 
@@ -27,6 +31,7 @@ function closePanel() {
       <header class="flex justify-between py-[10px] px-[20px] bg-[var(--green-color-1)]">
         <button @click="closePanel"><img src="@/assets/images/icon/pure_cancel_icon.svg" /></button>
         <button
+          @click="$emit('addDestinationBtnClick')"
           class="flex items-center border border-[var(--main-brand-color-1)] py-[8px] px-[24px] text-[var(--main-brand-color-1)] rounded-lg"
         >
           <img src="@/assets/images/icon/location_search_icon.svg" />
