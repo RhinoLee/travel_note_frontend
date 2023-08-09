@@ -1,7 +1,18 @@
 import { defineStore } from 'pinia'
-import dayjs from 'dayjs'
-import { createTripAPI, getTripsApi, getTripApi, createTripDayApi } from '@/services/trips'
-import { formatTime, formatDate } from '@/utils/formatDateTime'
+import {
+  createTripAPI,
+  getTripsApi,
+  getTripApi,
+  createTripDayApi,
+  getTripDayWithDestination
+} from '@/services/trips'
+import {
+  formatTime,
+  formatDateToUTC,
+  dateToLocalDate,
+  generateDateRange,
+  timeToLocalTime
+} from '@/utils/formatDateTime'
 import useMapStore from '@/stores/map/map'
 import type {
   ITripParams,
@@ -9,15 +20,16 @@ import type {
   IListResItem,
   IListParams,
   IListRes,
-  IDayTripParams
+  IDayTripParams,
+  IDayDestinationRes
 } from '@/services/trips/type'
 
 interface IState {
   currentTrip: IListItem | null
-  trips: Array<IListItem>
+  trips: IListItem[]
   createData: ITripParams | null
   createTripDayData: any
-  tripData: any
+  dayDestinationsData: IDayDestinationRes[]
 }
 
 const useTripsStore = defineStore({
@@ -27,29 +39,7 @@ const useTripsStore = defineStore({
     trips: [],
     createData: null,
     createTripDayData: null,
-    // api response data
-    tripData: [
-      {
-        trip_date: '2021/10/04',
-        destinations: [
-          {
-            name: '台東森林公園', // from google
-            place_id: 'xxxx', // from google
-            lat: 12.2222, //from google
-            lng: 13.3333, // from google
-            arrival_time: '10:00',
-            leave_time: '14:00',
-            visit_order: 0
-          }
-        ]
-      },
-      {
-        trip_date: '2021/10/05'
-      },
-      {
-        trip_date: '2021/10/06'
-      }
-    ]
+    dayDestinationsData: []
   }),
   getters: {
     getCreateTripParams(): FormData | null {
@@ -57,6 +47,7 @@ const useTripsStore = defineStore({
       const formatData = {} as ITripParams
       const formData = new FormData()
 
+      // 設定 formData 資料
       ;(Object.keys(this.createData) as Array<keyof ITripParams>).forEach((key) => {
         if (this.createData) {
           if (key === 'tripImage') {
@@ -66,7 +57,7 @@ const useTripsStore = defineStore({
               formatData[key] = file || null
             }
           } else if (key === 'start_date' || key === 'end_date') {
-            formatData[key] = dayjs(this.createData[key]).toISOString()
+            formatData[key] = formatDateToUTC(this.createData[key])
           } else {
             formatData[key] = this.createData[key]
           }
@@ -77,11 +68,15 @@ const useTripsStore = defineStore({
 
       return formData
     },
-    getTrips(): Array<IListItem> {
-      return this.trips
-    },
-    getTripData(): any {
-      return this.tripData
+    getTrips(): IListItem[] {
+      const computedTrips = this.trips.map((trip) => {
+        trip.start_date = dateToLocalDate(trip.start_date)
+        trip.end_date = dateToLocalDate(trip.end_date)
+        return {
+          ...trip
+        }
+      })
+      return computedTrips
     },
     getCreateTripDayParams(): IDayTripParams | null {
       const mapStore = useMapStore()
@@ -91,18 +86,27 @@ const useTripsStore = defineStore({
       const { name, trip_date, arrival_time, leave_time } = this.createTripDayData
       const params = {
         tripId: this.currentTrip?.id,
-        trip_date: formatDate(trip_date.toISOString()),
+        trip_date: formatDateToUTC(trip_date),
         name,
         address: formatted_address,
         place_id,
         lat: geometry?.location?.lat(),
         lng: geometry?.location?.lng(),
-        arrival_time: formatTime(arrival_time),
-        leave_time: formatTime(leave_time),
+        arrival_time: formatTime(arrival_time, trip_date),
+        leave_time: formatTime(leave_time, trip_date),
         visit_order: 0
       }
 
       return params as IDayTripParams
+    },
+    getTripDaysSelectOptions(): { date: string; weekday: string }[] {
+      if (!this.currentTrip) return []
+      const { start_date, end_date } = this.currentTrip
+
+      return generateDateRange(start_date, end_date)
+    },
+    getDayDestinationsData(): IDayDestinationRes[] {
+      return this.dayDestinationsData
     }
   },
   actions: {
@@ -114,6 +118,13 @@ const useTripsStore = defineStore({
     },
     setTripDayData(data: any) {
       this.createTripDayData = data
+    },
+    setDayDestinationsData(data: IDayDestinationRes[]) {
+      data.forEach((item) => {
+        item.arrival_time = timeToLocalTime(item.trip_date, item.arrival_time)
+        item.leave_time = timeToLocalTime(item.trip_date, item.leave_time)
+      })
+      this.dayDestinationsData = data
     },
     async createTrip() {
       // use getCreateTripParams to call api
@@ -152,16 +163,34 @@ const useTripsStore = defineStore({
         throw err
       }
     },
-    async createTripDayActions() {
+    async createTripDayAction() {
       if (!this.getCreateTripDayParams) return
-      console.log('createTripDayActions params', this.getCreateTripDayParams)
+      console.log('createTripDayAction params', this.getCreateTripDayParams)
       try {
         const result = await createTripDayApi(this.getCreateTripDayParams)
-        console.log('createTripDayActions result: ', result)
+        console.log('createTripDayAction result: ', result)
       } catch (err) {
-        console.log('createTripDayActions error: ', err)
+        console.log('createTripDayAction error: ', err)
         throw err
       }
+    },
+    async getDayDestinationAction(trip_date: string) {
+      if (!this.currentTrip) return
+      try {
+        const result = await getTripDayWithDestination({
+          tripId: this.currentTrip.id,
+          trip_date
+        })
+
+        if (result.success) {
+          this.setDayDestinationsData(result.data)
+          return
+        }
+      } catch (err) {
+        console.log(err)
+      }
+
+      this.setDayDestinationsData([])
     }
   }
 })

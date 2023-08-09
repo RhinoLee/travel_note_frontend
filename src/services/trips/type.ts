@@ -37,7 +37,7 @@ export interface IListResPage {
 }
 
 export interface IListRes {
-  data: Array<IListResItem>
+  data: IListResItem[]
   success: boolean
   pagination: IListResPage
 }
@@ -53,4 +53,16 @@ export interface IDayTripParams {
   arrival_time: TimeStringFormat
   leave_time: TimeStringFormat
   visit_order: number
+}
+
+export type IDayDestinationParmas = Pick<IDayTripParams, 'tripId' | 'trip_date'>
+
+export type IDayDestinationRes = {
+  id: number
+  arrival_time: string
+  leave_time: string
+  visit_order: number
+  destinationName: string
+  place_id: string
+  trip_date: string
 }

@@ -18,7 +18,7 @@ async function getTripsHandler() {
 const router = useRouter()
 function goToTrip(trip: IListItem) {
   tripsStore.setCurrentTrip(trip)
-  router.push({ name: 'trip', params: { tripId: trip.id } })
+  router.push({ name: 'trip', params: { tripId: trip.id, tripDate: trip.start_date } })
 }
 
 onMounted(async () => {
@@ -39,7 +39,7 @@ defineExpose({ getTripsHandler })
   >
     <!-- schedule item -->
     <div
-      v-for="trip in tripsStore.trips"
+      v-for="trip in tripsStore.getTrips"
       :key="trip.id"
       class="flex flex-col bg-white shadow-green rounded-md overflow-hidden cursor-pointer"
       @click="goToTrip(trip)"

@@ -2,7 +2,7 @@ import { object, string, date, number } from 'yup'
 import dayjs from 'dayjs'
 import type { IFormField } from '@/components/common/formModal/config/types'
 
-export function formFieldsHandler({ start_date, end_date }: any): Array<IFormField> {
+export function formFieldsHandler({ start_date, end_date }: any): IFormField[] {
   return [
     {
       prop: 'name',

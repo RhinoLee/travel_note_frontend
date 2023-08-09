@@ -10,12 +10,13 @@ import useTripsStore from '@/stores/trips/trips'
 import FormModal from '@/components/common/formModal/FormModal.vue'
 import useFormModal from '@/composables/modal/useFormModal'
 import { schema, formFieldsHandler } from './config/formFields'
+import { formatDateToUTC } from '@/utils/formatDateTime'
 
 import type { Ref } from 'vue'
 import type { IFormField } from '@/components/common/formModal/config/types'
 
 const tripsStore = useTripsStore()
-const customFormFields: Ref<Array<IFormField>> = ref([])
+const customFormFields: Ref<IFormField[]> = ref([])
 
 interface GooglePlacesService {
   nearbySearchHandler: (request: google.maps.places.TextSearchRequest) => void
@@ -28,11 +29,14 @@ const googlePlacesService = ref<GooglePlacesService | null>(null)
 
 const { formMadalRef, createClickHandler } = useFormModal()
 
+// call 新增目的地 api
 async function createSubmitHandler(data: any) {
   tripsStore.setTripDayData(data)
-  await tripsStore.createTripDayActions()
+  await tripsStore.createTripDayAction()
 }
 function updateSubmitHandler() {}
+
+// 按下加入行程，打開 Form 讓 user 填資料
 function openDestinationFormHandler() {
   // 帶入透過 place_id 取得的 place detail name 給 name field 做 initValue 設定
   const field = customFormFields.value.find((field) => field.prop === 'name')
@@ -42,7 +46,13 @@ function openDestinationFormHandler() {
 }
 
 const route = useRoute()
-const { tripId } = route.params
+const { tripId, tripDate } = route.params
+
+// 取得日期對應到的目的地行程
+async function getDayTripDestination(date: Date | string) {
+  // call api to get this day destination
+  await tripsStore.getDayDestinationAction(formatDateToUTC(date))
+}
 
 onMounted(async () => {
   await useGoogleMapsLoader(mapDom)
@@ -61,6 +71,9 @@ onMounted(async () => {
       start_date: tripsStore.currentTrip?.start_date,
       end_date: tripsStore.currentTrip?.end_date
     })
+
+    // 取得 start_date 的行程
+    await getDayTripDestination(tripDate as string)
   } catch (err) {
     console.log('getTrip api error', err)
   }
@@ -96,7 +109,7 @@ watch(
   <div class="grid grid-cols-[400px_1fr] w-full h-full">
     <!-- panel -->
     <div class="w-full h-full">
-      <SchedulePanel v-if="mapStore.getMap">
+      <SchedulePanel v-if="mapStore.getMap" @getDayTripDestination="getDayTripDestination">
         <DestinationPanel @addDestinationBtnClick="openDestinationFormHandler"></DestinationPanel>
       </SchedulePanel>
     </div>

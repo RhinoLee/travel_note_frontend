@@ -6,8 +6,8 @@ export interface IFormField {
   type: string
   placeholder: string
   initValue: any
-  refFields: Array<string>
-  yearsRange?: Array<number>
+  refFields: string[]
+  yearsRange?: number[]
   minDate?: string
   maxDate?: string
   enableTimePicker?: boolean
