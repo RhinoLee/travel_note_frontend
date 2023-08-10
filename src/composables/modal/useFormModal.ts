@@ -7,8 +7,8 @@ const useFormModal = () => {
   function createClickHandler() {
     formMadalRef.value?.setModalVisible()
   }
-  function editClickHandler() {
-    formMadalRef.value?.setModalVisible(false)
+  function editClickHandler(itemData: any) {
+    formMadalRef.value?.setModalVisible(false, itemData)
   }
 
   return { formMadalRef, createClickHandler, editClickHandler }

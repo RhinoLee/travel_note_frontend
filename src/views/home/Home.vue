@@ -6,6 +6,7 @@ import useFormModal from '@/composables/modal/useFormModal'
 import { formFields, schema } from './config/formFields'
 import useTripsStore from '@/stores/trips/trips'
 import { notify } from '@kyvg/vue3-notification'
+import { CREATE_SUCCESS_MESSAGE, CREATE_FAILED_MESSAGE } from '@/common/constants'
 
 const tripListRef = ref<InstanceType<typeof TripList> | null>(null)
 
@@ -17,13 +18,13 @@ async function createSubmitHandler(data: any) {
     const result = await tripsStore.createTrip()
     tripsStore.setCreateData(null)
     if (result.success) {
-      notify({ type: 'success', text: '新增旅程成功' })
+      notify({ type: 'success', text: CREATE_SUCCESS_MESSAGE })
       await tripListRef.value?.getTripsHandler()
     } else {
-      notify({ type: 'error', text: '新增旅程失敗' })
+      notify({ type: 'error', text: CREATE_FAILED_MESSAGE })
     }
   } catch (error) {
-    notify({ type: 'error', text: '新增旅程失敗' })
+    notify({ type: 'error', text: CREATE_FAILED_MESSAGE })
   }
 
   formMadalRef.value?.setModalVisible()

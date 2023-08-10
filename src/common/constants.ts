@@ -1,2 +1,6 @@
 export const LOGIN_TOKEN = 'login_token'
 export const MAIN_BRAND_COLOR_1 = '#145049'
+export const EDIT_SUCCESS_MESSAGE = '編輯成功'
+export const EDIT_FALIED_MESSAGE = '編輯失敗'
+export const CREATE_SUCCESS_MESSAGE = '新增成功'
+export const CREATE_FAILED_MESSAGE = '新增失敗'

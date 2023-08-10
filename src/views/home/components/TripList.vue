@@ -18,7 +18,7 @@ async function getTripsHandler() {
 const router = useRouter()
 function goToTrip(trip: IListItem) {
   tripsStore.setCurrentTrip(trip)
-  router.push({ name: 'trip', params: { tripId: trip.id, tripDate: trip.start_date } })
+  router.push({ name: 'trip', params: { trip_id: trip.id, tripDate: trip.start_date } })
 }
 
 onMounted(async () => {

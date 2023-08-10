@@ -3,8 +3,9 @@ import { ref, reactive } from 'vue'
 import { useGooglePlacesService } from '@/composables/map/useGooglePlacesService'
 import useMapStore from '@/stores/map/map'
 import useTripsStore from '@/stores/trips/trips'
+import type { IDayDestinationRes } from '@/services/trips/type'
 
-const emit = defineEmits(['addDestinationBtnClick', 'getDayTripDestination'])
+const emit = defineEmits(['addDestinationBtnClick', 'getDayTripDestination', 'editDayDetination'])
 
 const tripsStore = useTripsStore()
 const mapStore = useMapStore()
@@ -24,6 +25,26 @@ async function getDayTripDestination(e: Event) {
   const target = e.target as HTMLSelectElement
   const date = target.value
   emit('getDayTripDestination', date)
+}
+
+function editDayDetination(data: IDayDestinationRes) {
+  const { id, trip_id, trip_day_id, destination_id } = data
+  tripsStore.setCurrentDayDestination({ id, trip_id, trip_day_id, destination_id })
+  const computedData = {
+    arrival_time: {
+      hours: data.arrival_time.split(':')[0],
+      minutes: data.arrival_time.split(':')[1],
+      seconds: '00'
+    },
+    leave_time: {
+      hours: data.leave_time.split(':')[0],
+      minutes: data.leave_time.split(':')[1],
+      seconds: '00'
+    },
+    name: data.name,
+    trip_date: data.trip_date
+  }
+  emit('editDayDetination', computedData)
 }
 
 // GPT input
@@ -119,12 +140,14 @@ async function gptInputHandler() {
             <span class="text-[var(--main-brand-color-1)]"
               >{{ item.arrival_time }} ~ {{ item.leave_time }}</span
             >
-            <span class="text-black">{{ item.destinationName }}</span>
+            <span class="text-black">{{ item.name }}</span>
           </div>
           <!-- actions -->
           <div class="flex items-center gap-[6px]">
             <!-- edit -->
-            <button><img class="w-[24px]" src="@/assets/images/icon/edit_icon.svg" /></button>
+            <button @click="editDayDetination(item)">
+              <img class="w-[24px]" src="@/assets/images/icon/edit_icon.svg" />
+            </button>
             <!-- delete -->
             <button>
               <img class="w-[24px]" src="@/assets/images/icon/cancel_bold_icon.svg" />

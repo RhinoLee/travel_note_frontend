@@ -11,6 +11,7 @@ import FormModal from '@/components/common/formModal/FormModal.vue'
 import useFormModal from '@/composables/modal/useFormModal'
 import { schema, formFieldsHandler } from './config/formFields'
 import { formatDateToUTC } from '@/utils/formatDateTime'
+import { notify } from '@kyvg/vue3-notification'
 
 import type { Ref } from 'vue'
 import type { IFormField } from '@/components/common/formModal/config/types'
@@ -27,26 +28,35 @@ const mapStore = useMapStore()
 const mapDom = ref<HTMLDivElement | undefined>(undefined)
 const googlePlacesService = ref<GooglePlacesService | null>(null)
 
-const { formMadalRef, createClickHandler } = useFormModal()
+const { formMadalRef, createClickHandler, editClickHandler } = useFormModal()
 
 // call 新增目的地 api
 async function createSubmitHandler(data: any) {
   tripsStore.setTripDayData(data)
-  await tripsStore.createTripDayAction()
+  const result = await tripsStore.createTripDayAction()
+  if (result.success) formMadalRef.value?.setModalVisible()
 }
-function updateSubmitHandler() {}
+async function updateSubmitHandler(data: any) {
+  tripsStore.setEditDayDestination(data)
+  const result = await tripsStore.updateTripDayWithDestinationAction()
+  if (result.success) formMadalRef.value?.setModalVisible()
+}
 
 // 按下加入行程，打開 Form 讓 user 填資料
-function openDestinationFormHandler() {
-  // 帶入透過 place_id 取得的 place detail name 給 name field 做 initValue 設定
-  const field = customFormFields.value.find((field) => field.prop === 'name')
-  if (field) field.initValue = mapStore.getClickedPlaceDetail?.name
-  // 打開新增 destination 表單
-  createClickHandler()
+function openDestinationFormHandler(type: string = 'create', data?: any) {
+  if (type === 'create') {
+    // 帶入透過 place_id 取得的 place detail name 給 name field 做 initValue 設定
+    const field = customFormFields.value.find((field) => field.prop === 'name')
+    if (field) field.initValue = mapStore.getClickedPlaceDetail?.name
+    // 打開新增 destination 表單
+    createClickHandler()
+  } else if (type === 'edit') {
+    editClickHandler(data)
+  }
 }
 
 const route = useRoute()
-const { tripId, tripDate } = route.params
+const { trip_id, tripDate } = route.params
 
 // 取得日期對應到的目的地行程
 async function getDayTripDestination(date: Date | string) {
@@ -64,7 +74,7 @@ onMounted(async () => {
   }
 
   try {
-    await tripsStore.getTripAction(tripId as string)
+    await tripsStore.getTripAction(trip_id as string)
 
     // 取得 trip 資訊，把相關資訊給 formFields 做 date, years range 設定
     customFormFields.value = formFieldsHandler({
@@ -109,7 +119,11 @@ watch(
   <div class="grid grid-cols-[400px_1fr] w-full h-full">
     <!-- panel -->
     <div class="w-full h-full">
-      <SchedulePanel v-if="mapStore.getMap" @getDayTripDestination="getDayTripDestination">
+      <SchedulePanel
+        v-if="mapStore.getMap"
+        @getDayTripDestination="getDayTripDestination"
+        @editDayDetination="(data) => openDestinationFormHandler('edit', data)"
+      >
         <DestinationPanel @addDestinationBtnClick="openDestinationFormHandler"></DestinationPanel>
       </SchedulePanel>
     </div>

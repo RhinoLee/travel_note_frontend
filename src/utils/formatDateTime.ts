@@ -12,8 +12,9 @@ dayjs.extend(isSameOrBefore)
 dayjs.extend(weekday)
 
 export interface ITimeObj {
-  hours: number
-  minutes: number
+  hours: number | string
+  minutes: number | string
+  seconds?: number | string
 }
 
 export type TimeStringFormat = `${string}:${string}:${string}`
@@ -23,10 +24,10 @@ export function formatTime(obj: ITimeObj, inputDate: Date | string): TimeStringF
   let hoursStr = ''
   let minutesStr = ''
 
-  if (hours < 10) hoursStr = '0' + hours
+  if (Number(hours) < 10) hoursStr = '0' + hours
   else hoursStr = String(hours)
 
-  if (minutes < 10) minutesStr = '0' + minutes
+  if (Number(minutes) < 10) minutesStr = '0' + minutes
   else minutesStr = String(minutes)
 
   // to utc timezone

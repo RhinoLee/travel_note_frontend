@@ -1,6 +1,11 @@
 import $axios from '@/services'
 import useUserStore from '@/stores/user/user'
-import type { IListParams, IDayTripParams, IDayDestinationParmas } from './type'
+import type {
+  IListParams,
+  IDayTripParams,
+  IDayDestinationParmas,
+  IUpdateDayDestinationParams
+} from './type'
 
 const userStore = useUserStore()
 
@@ -27,11 +32,11 @@ export const getTripsApi = ({ limit, page }: IListParams) => {
   })
 }
 
-export const getTripApi = (tripId: string) => {
+export const getTripApi = (trip_id: string) => {
   if (!userStore.token) return new Error('token is null')
 
   return $axios.get({
-    url: `/trip?tripId=${tripId}`,
+    url: `/trip?trip_id=${trip_id}`,
     headers: {
       Authorization: `Bearer ${userStore.token}`
     }
@@ -40,7 +45,7 @@ export const getTripApi = (tripId: string) => {
 
 export const createTripDayApi = (data: IDayTripParams) => {
   return $axios.post({
-    url: `/trip/${data.tripId}`,
+    url: `/trip/${data.trip_id}`,
     data,
     headers: {
       Authorization: `Bearer ${userStore.token}`
@@ -48,9 +53,20 @@ export const createTripDayApi = (data: IDayTripParams) => {
   })
 }
 
-export const getTripDayWithDestination = (data: IDayDestinationParmas) => {
+export const getTripDayWithDestinationAPI = (data: IDayDestinationParmas) => {
   return $axios.get({
-    url: `/trip/${data.tripId}/${data.trip_date}`,
+    url: `/trip/${data.trip_id}/${data.trip_date}`,
+    headers: {
+      Authorization: `Bearer ${userStore.token}`
+    }
+  })
+}
+
+export const updateTripDayWithDestinationAPI = (data: IUpdateDayDestinationParams) => {
+  if (!data) return
+  return $axios.put({
+    url: `/trip/${data.trip_id}/${data.trip_day_id}`,
+    data,
     headers: {
       Authorization: `Bearer ${userStore.token}`
     }

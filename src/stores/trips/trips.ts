@@ -1,10 +1,19 @@
 import { defineStore } from 'pinia'
+import { notify } from '@kyvg/vue3-notification'
+import {
+  EDIT_SUCCESS_MESSAGE,
+  EDIT_FALIED_MESSAGE,
+  CREATE_SUCCESS_MESSAGE,
+  CREATE_FAILED_MESSAGE
+} from '@/common/constants'
+
 import {
   createTripAPI,
   getTripsApi,
   getTripApi,
   createTripDayApi,
-  getTripDayWithDestination
+  getTripDayWithDestinationAPI,
+  updateTripDayWithDestinationAPI
 } from '@/services/trips'
 import {
   formatTime,
@@ -21,7 +30,9 @@ import type {
   IListParams,
   IListRes,
   IDayTripParams,
-  IDayDestinationRes
+  IDayDestinationRes,
+  IEditDayDestination,
+  IUpdateDayDestinationId
 } from '@/services/trips/type'
 
 interface IState {
@@ -29,6 +40,8 @@ interface IState {
   trips: IListItem[]
   createData: ITripParams | null
   createTripDayData: any
+  editDayDestination: any
+  currentDayDestination: IUpdateDayDestinationId | null
   dayDestinationsData: IDayDestinationRes[]
 }
 
@@ -39,6 +52,8 @@ const useTripsStore = defineStore({
     trips: [],
     createData: null,
     createTripDayData: null,
+    editDayDestination: null,
+    currentDayDestination: null,
     dayDestinationsData: []
   }),
   getters: {
@@ -85,7 +100,7 @@ const useTripsStore = defineStore({
       const { formatted_address, place_id, geometry } = mapStore.getClickedPlaceDetail
       const { name, trip_date, arrival_time, leave_time } = this.createTripDayData
       const params = {
-        tripId: this.currentTrip?.id,
+        trip_id: this.currentTrip?.id,
         trip_date: formatDateToUTC(trip_date),
         name,
         address: formatted_address,
@@ -99,6 +114,22 @@ const useTripsStore = defineStore({
 
       return params as IDayTripParams
     },
+    getEditDayDestination(): IEditDayDestination | null {
+      if (!this.editDayDestination) return null
+
+      const {
+        name,
+        arrival_time: arrival,
+        leave_time: leave,
+        trip_date: date
+      } = this.editDayDestination
+
+      const arrival_time = formatTime(arrival, date)
+      const leave_time = formatTime(leave, date)
+      const trip_date = formatDateToUTC(date)
+
+      return { name, arrival_time, leave_time, trip_date }
+    },
     getTripDaysSelectOptions(): { date: string; weekday: string }[] {
       if (!this.currentTrip) return []
       const { start_date, end_date } = this.currentTrip
@@ -107,6 +138,15 @@ const useTripsStore = defineStore({
     },
     getDayDestinationsData(): IDayDestinationRes[] {
       return this.dayDestinationsData
+    },
+    getCurrentDayDestination(): IUpdateDayDestinationId | undefined {
+      if (!this.currentTrip || !this.currentDayDestination) return
+      const trip_id = this.currentTrip.id
+      const trip_day_id = this.currentDayDestination.trip_day_id
+      const id = this.currentDayDestination.id
+      const destination_id = this.currentDayDestination.destination_id
+
+      return { trip_id, trip_day_id, id, destination_id }
     }
   },
   actions: {
@@ -125,6 +165,12 @@ const useTripsStore = defineStore({
         item.leave_time = timeToLocalTime(item.trip_date, item.leave_time)
       })
       this.dayDestinationsData = data
+    },
+    setEditDayDestination(data: IDayDestinationRes) {
+      this.editDayDestination = data
+    },
+    setCurrentDayDestination(data: IUpdateDayDestinationId) {
+      this.currentDayDestination = data
     },
     async createTrip() {
       // use getCreateTripParams to call api
@@ -154,9 +200,9 @@ const useTripsStore = defineStore({
         throw err
       }
     },
-    async getTripAction(tripId: string) {
+    async getTripAction(trip_id: string) {
       try {
-        const result = await getTripApi(tripId)
+        const result = await getTripApi(trip_id)
         this.setCurrentTrip(result.data)
       } catch (err) {
         console.log('getTripAction err', err)
@@ -168,29 +214,59 @@ const useTripsStore = defineStore({
       console.log('createTripDayAction params', this.getCreateTripDayParams)
       try {
         const result = await createTripDayApi(this.getCreateTripDayParams)
-        console.log('createTripDayAction result: ', result)
+        if (result.success) {
+          notify({ type: 'success', text: CREATE_SUCCESS_MESSAGE })
+        } else {
+          notify({ type: 'error', text: CREATE_FAILED_MESSAGE })
+        }
+        return result
       } catch (err) {
         console.log('createTripDayAction error: ', err)
+        notify({ type: 'error', text: CREATE_FAILED_MESSAGE })
         throw err
       }
     },
     async getDayDestinationAction(trip_date: string) {
       if (!this.currentTrip) return
       try {
-        const result = await getTripDayWithDestination({
-          tripId: this.currentTrip.id,
+        const result = await getTripDayWithDestinationAPI({
+          trip_id: this.currentTrip.id,
           trip_date
         })
 
         if (result.success) {
           this.setDayDestinationsData(result.data)
-          return
         }
+        return result
       } catch (err) {
         console.log(err)
       }
 
       this.setDayDestinationsData([])
+    },
+    async updateTripDayWithDestinationAction() {
+      if (!this.getCurrentDayDestination || !this.getEditDayDestination) return
+      const params = {
+        ...this.getCurrentDayDestination,
+        ...this.getEditDayDestination
+      }
+
+      try {
+        const result = await updateTripDayWithDestinationAPI(params)
+        if (result.success) {
+          this.setDayDestinationsData(result.data)
+          notify({ type: 'success', text: EDIT_SUCCESS_MESSAGE })
+        } else {
+          notify({ type: 'error', text: EDIT_FALIED_MESSAGE })
+        }
+        console.log('updateTripDayWithDestinationAction result', result)
+
+        return result
+      } catch (err) {
+        console.log(err)
+        notify({ type: 'error', text: EDIT_FALIED_MESSAGE })
+        throw err
+      }
     }
   }
 })

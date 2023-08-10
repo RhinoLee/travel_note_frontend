@@ -1,5 +1,5 @@
 export default {
-  path: '/trip/:tripId/:tripDate',
+  path: '/trip/:trip_id/:tripDate',
   name: 'trip',
   component: () => import('@/views/trip/Trip.vue'),
   children: [],
