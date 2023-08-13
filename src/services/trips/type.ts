@@ -61,8 +61,6 @@ export type IDayDestinationParmas = Pick<IDayTripParams, 'trip_id' | 'trip_date'
  * 更新 tabel 資料的 id params
  * @id - tripdays_destinations table id
  * @trip_id - trips table id
- * @trip_day_id - trip_days table id
- * @destination_id - destination table id
  */
 
 export interface IDayDestinationRes {
@@ -74,8 +72,8 @@ export interface IDayDestinationRes {
   place_id: string
   trip_date: string
   trip_id: number
-  trip_day_id: number
-  destination_id: number
+  lat: number
+  lng: number
 }
 
 export type IEditDayDestination = Pick<
@@ -83,20 +81,9 @@ export type IEditDayDestination = Pick<
   'name' | 'trip_date' | 'arrival_time' | 'leave_time'
 >
 
-export interface IUpdateDayDestinationParams {
-  id: number
-  arrival_time: string
-  leave_time: string
-  name: string
-  trip_date: string
-  destination_id: number
-  trip_day_id: number
-  trip_id: number
-}
+export type IUpdateDayDestinationParams = Pick<
+  IDayDestinationRes,
+  'id' | 'arrival_time' | 'leave_time' | 'name' | 'trip_date' | 'trip_id'
+>
 
-export interface IUpdateDayDestinationId {
-  trip_id: number
-  trip_day_id: number
-  id: number
-  destination_id: number
-}
+export type IUpdateDayDestinationId = Pick<IDayDestinationRes, 'trip_id' | 'id'>

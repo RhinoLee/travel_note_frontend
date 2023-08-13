@@ -64,9 +64,10 @@ export const getTripDayWithDestinationAPI = (data: IDayDestinationParmas) => {
 
 export const updateTripDayWithDestinationAPI = (data: IUpdateDayDestinationParams) => {
   if (!data) return
+  const { arrival_time, leave_time, name, trip_date } = data
   return $axios.put({
-    url: `/trip/${data.trip_id}/${data.trip_day_id}`,
-    data,
+    url: `/trip/${data.trip_id}/${data.id}`,
+    data: { arrival_time, leave_time, name, trip_date },
     headers: {
       Authorization: `Bearer ${userStore.token}`
     }

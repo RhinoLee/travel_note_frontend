@@ -28,8 +28,8 @@ async function getDayTripDestination(e: Event) {
 }
 
 function editDayDetination(data: IDayDestinationRes) {
-  const { id, trip_id, trip_day_id, destination_id } = data
-  tripsStore.setCurrentDayDestination({ id, trip_id, trip_day_id, destination_id })
+  const { id, trip_id } = data
+  tripsStore.setCurrentDayDestination({ id, trip_id })
   const computedData = {
     arrival_time: {
       hours: data.arrival_time.split(':')[0],

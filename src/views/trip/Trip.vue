@@ -11,10 +11,10 @@ import FormModal from '@/components/common/formModal/FormModal.vue'
 import useFormModal from '@/composables/modal/useFormModal'
 import { schema, formFieldsHandler } from './config/formFields'
 import { formatDateToUTC } from '@/utils/formatDateTime'
-import { notify } from '@kyvg/vue3-notification'
 
 import type { Ref } from 'vue'
 import type { IFormField } from '@/components/common/formModal/config/types'
+import type { IDayDestinationRes } from '@/services/trips/type'
 
 const tripsStore = useTripsStore()
 const customFormFields: Ref<IFormField[]> = ref([])
@@ -22,6 +22,7 @@ const customFormFields: Ref<IFormField[]> = ref([])
 interface GooglePlacesService {
   nearbySearchHandler: (request: google.maps.places.TextSearchRequest) => void
   getPlaceDetails: (placeId: string) => void
+  createMarkerByDestination: (places: IDayDestinationRes[]) => void
 }
 
 const mapStore = useMapStore()
@@ -88,6 +89,13 @@ onMounted(async () => {
     console.log('getTrip api error', err)
   }
 })
+
+watch(
+  () => tripsStore.dayDestinationsData,
+  async (newVal) => {
+    await googlePlacesService.value?.createMarkerByDestination(newVal)
+  }
+)
 
 watch(
   () => mapStore.searchResults,

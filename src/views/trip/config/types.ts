@@ -6,3 +6,12 @@ export interface IFormData {
   end_date: string
   tripImage: VueUploadItem[]
 }
+
+interface IPosition {
+  lat: number
+  lng: number
+}
+export interface IMarkerParmas {
+  place_id: string
+  position: IPosition
+}

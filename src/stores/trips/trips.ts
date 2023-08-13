@@ -142,11 +142,9 @@ const useTripsStore = defineStore({
     getCurrentDayDestination(): IUpdateDayDestinationId | undefined {
       if (!this.currentTrip || !this.currentDayDestination) return
       const trip_id = this.currentTrip.id
-      const trip_day_id = this.currentDayDestination.trip_day_id
       const id = this.currentDayDestination.id
-      const destination_id = this.currentDayDestination.destination_id
 
-      return { trip_id, trip_day_id, id, destination_id }
+      return { trip_id, id }
     }
   },
   actions: {
