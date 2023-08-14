@@ -1,10 +1,17 @@
 import { defineStore } from 'pinia'
 import { toRaw } from 'vue'
 import { completionAPI } from '@/services/open_ai'
+import {
+  DESTINATION_MARKERS_TYPE,
+  SEARCH_MARKERS_TYPE,
+  ALL_MARKERS_TYPE
+} from '@/composables/map/constants'
 
 interface IMapState {
   map: google.maps.Map | null
-  markers: google.maps.Marker[]
+  directionsRenderer: google.maps.DirectionsRenderer | null
+  searchMarkers: google.maps.Marker[]
+  destinationMarkers: google.maps.Marker[]
   searchResults: google.maps.places.PlaceResult[] | null
   clickedPlaceId: string
   clickedPlaceDetail: google.maps.places.PlaceResult | null
@@ -22,7 +29,9 @@ const useMapStore = defineStore({
   id: 'map',
   state: (): IMapState => ({
     map: null,
-    markers: [],
+    directionsRenderer: null,
+    searchMarkers: [],
+    destinationMarkers: [],
     searchResults: [],
     clickedPlaceId: '',
     clickedPlaceDetail: null
@@ -64,10 +73,37 @@ const useMapStore = defineStore({
     setMap(map: google.maps.Map) {
       this.map = map
     },
-    stopMarkersAnimate() {
-      this.markers.forEach((marker) => {
-        marker.setAnimation(null)
-      })
+    setDirectionRenderer(renderer: google.maps.DirectionsRenderer) {
+      this.directionsRenderer = renderer
+    },
+    stopMarkersAnimate(type: string) {
+      switch (type) {
+        case SEARCH_MARKERS_TYPE: {
+          this.searchMarkers.forEach((marker) => {
+            marker.setAnimation(null)
+          })
+
+          break
+        }
+        case DESTINATION_MARKERS_TYPE: {
+          this.destinationMarkers.forEach((marker) => {
+            marker.setAnimation(null)
+          })
+
+          break
+        }
+        case ALL_MARKERS_TYPE: {
+          this.searchMarkers.forEach((marker) => {
+            marker.setAnimation(null)
+          })
+
+          this.destinationMarkers.forEach((marker) => {
+            marker.setAnimation(null)
+          })
+
+          break
+        }
+      }
     },
     setMapZoomLevel(level: number) {
       this.map?.setZoom(level)
@@ -81,17 +117,47 @@ const useMapStore = defineStore({
     setClickedPlaceDetail(placeDetail: google.maps.places.PlaceResult | null) {
       this.clickedPlaceDetail = placeDetail
     },
-    addMarker(marker: google.maps.Marker) {
-      this.markers.push(marker)
-    },
-    hideMarkers() {
-      for (let i = 0; i < this.markers.length; i++) {
-        toRaw(this.markers[i]).setMap(null)
+    addMarker(marker: google.maps.Marker, type: string) {
+      switch (type) {
+        case SEARCH_MARKERS_TYPE: {
+          this.searchMarkers.push(marker)
+          break
+        }
+        case DESTINATION_MARKERS_TYPE: {
+          this.destinationMarkers.push(marker)
+        }
       }
     },
-    deleteMarkers() {
-      this.hideMarkers()
-      this.markers = []
+    hideMarkers(type: string) {
+      switch (type) {
+        case SEARCH_MARKERS_TYPE: {
+          for (let i = 0; i < this.searchMarkers.length; i++) {
+            toRaw(this.searchMarkers[i]).setMap(null)
+          }
+          break
+        }
+        case DESTINATION_MARKERS_TYPE: {
+          for (let i = 0; i < this.destinationMarkers.length; i++) {
+            toRaw(this.destinationMarkers[i]).setMap(null)
+          }
+        }
+      }
+    },
+    deleteMarkers(type: string) {
+      this.hideMarkers(type)
+
+      switch (type) {
+        case SEARCH_MARKERS_TYPE: {
+          this.searchMarkers = []
+          break
+        }
+        case DESTINATION_MARKERS_TYPE: {
+          this.destinationMarkers = []
+        }
+      }
+    },
+    displayDirectionPath(data: google.maps.Map | null) {
+      this.directionsRenderer?.setMap(data)
     },
     async getOpenAPICompletion(gptInput: string) {
       // const { nearbySearchHandler, taiwanCenter } = useGooglePlacesService(this.map!)

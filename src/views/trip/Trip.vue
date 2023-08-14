@@ -33,6 +33,7 @@ interface GooglePlacesService {
     place_id: string
     destinationId: number | null
   }) => void
+  calculateAndDisplayRoute: () => void
 }
 
 const mapStore = useMapStore()
@@ -71,13 +72,15 @@ const { trip_id, tripDate } = route.params
 
 // 取得日期對應到的目的地行程
 async function getDayTripDestination(date: Date | string) {
+  // 清除當前顯示的 path
+  mapStore.displayDirectionPath(null)
   // call api to get this day destination
   await tripsStore.getDayDestinationAction(formatDateToUTC(date))
 }
 
 function clickDestinationHandler({ id, place_id }: { id: number; place_id: string }) {
   tripsStore.setCurrentDestinationId(id)
-  const marker = mapStore.markers.filter((marker) => {
+  const marker = mapStore.destinationMarkers.filter((marker) => {
     return marker.getTitle() === String(id)
   })
 
@@ -86,10 +89,6 @@ function clickDestinationHandler({ id, place_id }: { id: number; place_id: strin
     place_id,
     destinationId: id
   })
-
-  // mapStore.stopMarkersAnimate()
-  // mapStore.setClickedPlaceId(place_id)
-  // googlePlacesService.value?.toggleBounce(marker[0])
 }
 
 onMounted(async () => {
@@ -121,6 +120,7 @@ watch(
   () => tripsStore.dayDestinationsData,
   async (newVal) => {
     await googlePlacesService.value?.createMarkerByDestination(newVal)
+    googlePlacesService.value?.calculateAndDisplayRoute()
   }
 )
 

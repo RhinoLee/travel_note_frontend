@@ -17,6 +17,9 @@ export async function useGoogleMapsLoader(mapElement: Ref<HTMLElement | undefine
 
   await loader.load()
 
+  const directionsRenderer = new google.maps.DirectionsRenderer({
+    suppressMarkers: true
+  })
   const taiwanCenter = new google.maps.LatLng(23.97565, 120.9738819)
   const map = new google.maps.Map(mapElement.value as HTMLElement, {
     center: taiwanCenter,
@@ -24,5 +27,7 @@ export async function useGoogleMapsLoader(mapElement: Ref<HTMLElement | undefine
     mapId: '1f3b2398b22831ea'
   })
 
+  directionsRenderer.setMap(map)
   mapStore.setMap(map)
+  mapStore.setDirectionRenderer(directionsRenderer)
 }

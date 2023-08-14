@@ -168,13 +168,13 @@ async function gptInputHandler() {
           </div>
         </div>
         <!-- sub item（destination distance） -->
-        <div class="flex items-center px-[16px] py-[8px]">
+        <div v-if="item.leg" class="flex items-center px-[16px] py-[8px]">
           <!-- icon -->
           <div class="w-[8px]"><img src="@/assets/images/icon/distance_line_icon.svg" /></div>
           <!-- distance & travel time -->
           <div class="flex flex-col ml-[14px] text-[var(--main-brand-color-2)]">
-            <span>車程：6.5 公里</span>
-            <span>預計時間：55分鐘</span>
+            <span>車程： {{ item.leg?.distance?.text }}</span>
+            <span>預計時間：{{ item.leg?.duration?.text }}</span>
           </div>
         </div>
       </div>

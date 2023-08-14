@@ -3,12 +3,19 @@ import useTripsStore from '@/stores/trips/trips'
 import type { IMarkerParmas } from '@/views/trip/config/types'
 import type { IDayDestinationRes } from '@/services/trips/type'
 import destination_marker_icon from '@/assets/images/icon/map/destination_marker_icon.svg'
-import { CLICK_MARKER_ZOOM_LEVEL } from './constants'
+import {
+  CLICK_MARKER_ZOOM_LEVEL,
+  ALL_MARKERS_TYPE,
+  DESTINATION_MARKERS_TYPE,
+  SEARCH_MARKERS_TYPE
+} from './constants'
 
 const mapStore = useMapStore()
 const tripsStore = useTripsStore()
 
 export function useGooglePlacesService(mapInstance: google.maps.Map) {
+  const directionsService = new google.maps.DirectionsService()
+
   const service: google.maps.places.PlacesService = new google.maps.places.PlacesService(
     mapInstance
   )
@@ -17,8 +24,8 @@ export function useGooglePlacesService(mapInstance: google.maps.Map) {
   let mapZoomTimeout: null | number = null
 
   // 清空 markers
-  const clearMarkers = () => {
-    mapStore.deleteMarkers()
+  const clearMarkers = (type: string) => {
+    mapStore.deleteMarkers(type)
   }
   // marker animation
   const toggleBounce = (marker: google.maps.Marker) => {
@@ -54,12 +61,12 @@ export function useGooglePlacesService(mapInstance: google.maps.Map) {
     destinationId: number | null
   }) => {
     // 先清除所有 marker 動畫
-    mapStore.stopMarkersAnimate()
+    mapStore.stopMarkersAnimate(ALL_MARKERS_TYPE)
     // 當下點擊 maker 加上動畫
     toggleBounce(marker)
     // 設定資料
     mapStore.setClickedPlaceId(place_id || '')
-    if (destinationId !== null) tripsStore.setCurrentDestinationId(destinationId)
+    tripsStore.setCurrentDestinationId(destinationId)
     // 地圖 zoom in
     if (mapZoomTimeout) clearTimeout(mapZoomTimeout)
     mapZoomTimeout = setTimeout(() => {
@@ -110,7 +117,7 @@ export function useGooglePlacesService(mapInstance: google.maps.Map) {
       cliclMarkerCallback(e, { place, marker })
     )
 
-    mapStore.addMarker(marker)
+    mapStore.addMarker(marker, SEARCH_MARKERS_TYPE)
   }
 
   // 拿到 destination 後使用的 api
@@ -131,7 +138,7 @@ export function useGooglePlacesService(mapInstance: google.maps.Map) {
       google.maps.event.addListener(marker, 'click', (e: Event) => {
         clickDestinationMarkerCallback(e, { place, marker })
       })
-      mapStore.addMarker(marker)
+      mapStore.addMarker(marker, DESTINATION_MARKERS_TYPE)
     })
   }
 
@@ -139,7 +146,7 @@ export function useGooglePlacesService(mapInstance: google.maps.Map) {
     request: google.maps.places.TextSearchRequest,
     deleteMarker: boolean = true
   ) => {
-    if (deleteMarker) clearMarkers()
+    if (deleteMarker) clearMarkers(SEARCH_MARKERS_TYPE)
 
     service.textSearch(
       request,
@@ -188,7 +195,7 @@ export function useGooglePlacesService(mapInstance: google.maps.Map) {
    * @param places - 目的地 array
    */
   const createMarkerByDestination = async (places: IDayDestinationRes[]) => {
-    clearMarkers()
+    clearMarkers(DESTINATION_MARKERS_TYPE)
 
     // 找出重複的 place_id，有重複代表 user 同一天去同一個地方超過一次
     // 會產生 marker 重疊問題，需要位移
@@ -214,6 +221,32 @@ export function useGooglePlacesService(mapInstance: google.maps.Map) {
     createDestinationMarkers(computedPlaces)
   }
 
+  const calculateAndDisplayRoute = () => {
+    if (!tripsStore.getDayDestinationsRouteParmas) return
+    directionsService
+      .route({
+        origin: tripsStore.getDayDestinationsRouteParmas?.origin,
+        destination: tripsStore.getDayDestinationsRouteParmas?.destination,
+        waypoints: tripsStore.getDayDestinationsRouteParmas?.waypoints,
+        optimizeWaypoints: false,
+        unitSystem: google.maps.UnitSystem.METRIC,
+        travelMode: google.maps.TravelMode.DRIVING
+      })
+      .then((response) => {
+        // 設定路徑結果到 renderer 上
+        mapStore.directionsRenderer?.setDirections(response)
+        // 顯示 direction path
+        mapStore.displayDirectionPath(mapStore.map)
+        const legs = response.routes[0].legs
+        tripsStore.setDirectionsLeg(legs)
+        console.log('map route response', response)
+      })
+      .catch((err) => {
+        tripsStore.setDirectionsLeg([])
+        console.log(err)
+      })
+  }
+
   return {
     nearbySearchHandler,
     getPlaceDetails,
@@ -221,6 +254,7 @@ export function useGooglePlacesService(mapInstance: google.maps.Map) {
     createMarkerByDestination,
     clearMarkers,
     toggleBounce,
-    triggerMarkerHandler
+    triggerMarkerHandler,
+    calculateAndDisplayRoute
   }
 }

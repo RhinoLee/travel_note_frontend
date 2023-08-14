@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import useMapStore from '@/stores/map/map'
 import useTripsStore from '@/stores/trips/trips'
-import { DEFAULT_ZOOM_LEVEL } from '@/composables/map/constants'
+import { DEFAULT_ZOOM_LEVEL, ALL_MARKERS_TYPE } from '@/composables/map/constants'
 
 defineEmits(['addDestinationBtnClick'])
 
@@ -21,7 +21,7 @@ function closePanel() {
   // 關閉面板
   isVisibled.value = false
   // 停止 marker 動畫
-  mapStore.stopMarkersAnimate()
+  mapStore.stopMarkersAnimate(ALL_MARKERS_TYPE)
   // 恢復到預設 zoom level
   mapStore.setMapZoomLevel(DEFAULT_ZOOM_LEVEL)
   // 清空 currentData

@@ -31,6 +31,7 @@ import type {
   IListRes,
   IDayTripParams,
   IDayDestinationRes,
+  IDestinationWithDistanceInfo,
   IEditDayDestination,
   IUpdateDayDestinationId
 } from '@/services/trips/type'
@@ -44,6 +45,7 @@ interface IState {
   editDayDestination: any
   currentDayDestination: IUpdateDayDestinationId | null
   dayDestinationsData: IDayDestinationRes[]
+  directionsLeg: google.maps.DirectionsLeg[]
 }
 
 const useTripsStore = defineStore({
@@ -56,7 +58,8 @@ const useTripsStore = defineStore({
     createTripDayData: null,
     editDayDestination: null,
     currentDayDestination: null,
-    dayDestinationsData: []
+    dayDestinationsData: [],
+    directionsLeg: []
   }),
   getters: {
     getCreateTripParams(): FormData | null {
@@ -138,8 +141,47 @@ const useTripsStore = defineStore({
 
       return generateDateRange(start_date, end_date)
     },
-    getDayDestinationsData(): IDayDestinationRes[] {
-      return this.dayDestinationsData
+    getDayDestinationsData(): IDestinationWithDistanceInfo[] {
+      const arr = this.dayDestinationsData.map((data, index) => {
+        return {
+          ...data,
+          leg: this.directionsLeg[index]
+        }
+      })
+
+      return arr
+    },
+    getDayDestinationsRouteParmas() {
+      if (!this.dayDestinationsData || this.dayDestinationsData.length < 2) return null
+      const origin: google.maps.Place = {
+        location: {
+          lat: this.dayDestinationsData[0].lat,
+          lng: this.dayDestinationsData[0].lng
+        }
+        // placeId: this.dayDestinationsData[0].place_id
+      }
+      const lastDestination = this.dayDestinationsData[this.dayDestinationsData.length - 1]
+      const destination: google.maps.Place = {
+        location: {
+          lat: lastDestination.lat,
+          lng: lastDestination.lng
+        }
+        // placeId: lastDestination.place_id
+      }
+      const waypoints: google.maps.DirectionsWaypoint[] = []
+
+      if (this.dayDestinationsData.length > 2) {
+        for (let i = 1; i < this.dayDestinationsData.length - 1; i++) {
+          waypoints.push({
+            location: {
+              lat: this.dayDestinationsData[i].lat,
+              lng: this.dayDestinationsData[i].lng
+            }
+          })
+        }
+      }
+
+      return { origin, destination, waypoints }
     },
     getCurrentDayDestination(): IUpdateDayDestinationId | undefined {
       if (!this.currentTrip || !this.currentDayDestination) return
@@ -168,6 +210,9 @@ const useTripsStore = defineStore({
         item.leave_time = timeToLocalTime(item.trip_date, item.leave_time)
       })
       this.dayDestinationsData = data
+    },
+    setDirectionsLeg(data: google.maps.DirectionsLeg[]) {
+      this.directionsLeg = data
     },
     setEditDayDestination(data: IDayDestinationRes) {
       this.editDayDestination = data
