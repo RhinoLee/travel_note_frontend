@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import { toRaw } from 'vue'
 import { completionAPI } from '@/services/open_ai'
-// import { useGooglePlacesService } from '@/composables/map/useGooglePlacesService'
 
 interface IMapState {
   map: google.maps.Map | null
@@ -64,6 +63,14 @@ const useMapStore = defineStore({
   actions: {
     setMap(map: google.maps.Map) {
       this.map = map
+    },
+    stopMarkersAnimate() {
+      this.markers.forEach((marker) => {
+        marker.setAnimation(null)
+      })
+    },
+    setMapZoomLevel(level: number) {
+      this.map?.setZoom(level)
     },
     setSearchResults(results: google.maps.places.PlaceResult[]) {
       this.searchResults = results

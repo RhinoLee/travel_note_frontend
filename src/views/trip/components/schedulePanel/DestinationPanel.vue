@@ -2,9 +2,12 @@
 import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import useMapStore from '@/stores/map/map'
+import useTripsStore from '@/stores/trips/trips'
+import { DEFAULT_ZOOM_LEVEL } from '@/composables/map/constants'
 
 defineEmits(['addDestinationBtnClick'])
 
+const tripsStore = useTripsStore()
 const mapStore = useMapStore()
 const { getClickedPlaceDetail } = storeToRefs(mapStore)
 const isVisibled = ref(false)
@@ -15,9 +18,16 @@ watch(getClickedPlaceDetail, (newVal) => {
 })
 
 function closePanel() {
+  // 關閉面板
   isVisibled.value = false
+  // 停止 marker 動畫
+  mapStore.stopMarkersAnimate()
+  // 恢復到預設 zoom level
+  mapStore.setMapZoomLevel(DEFAULT_ZOOM_LEVEL)
+  // 清空 currentData
   mapStore.setClickedPlaceId('')
   mapStore.setClickedPlaceDetail(null)
+  tripsStore.setCurrentDestinationId(null)
 }
 </script>
 

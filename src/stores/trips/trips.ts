@@ -37,6 +37,7 @@ import type {
 
 interface IState {
   currentTrip: IListItem | null
+  currentDestinationId: number | null
   trips: IListItem[]
   createData: ITripParams | null
   createTripDayData: any
@@ -49,6 +50,7 @@ const useTripsStore = defineStore({
   id: 'trips',
   state: (): IState => ({
     currentTrip: null,
+    currentDestinationId: null,
     trips: [],
     createData: null,
     createTripDayData: null,
@@ -150,6 +152,9 @@ const useTripsStore = defineStore({
   actions: {
     setCurrentTrip(trip: IListItem) {
       this.currentTrip = trip
+    },
+    setCurrentDestinationId(id: number | null) {
+      this.currentDestinationId = id
     },
     setCreateData(data: any) {
       this.createData = data

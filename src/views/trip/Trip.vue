@@ -23,6 +23,16 @@ interface GooglePlacesService {
   nearbySearchHandler: (request: google.maps.places.TextSearchRequest) => void
   getPlaceDetails: (placeId: string) => void
   createMarkerByDestination: (places: IDayDestinationRes[]) => void
+  toggleBounce: (marker: google.maps.Marker) => void
+  triggerMarkerHandler: ({
+    marker,
+    place_id,
+    destinationId
+  }: {
+    marker: google.maps.Marker
+    place_id: string
+    destinationId: number | null
+  }) => void
 }
 
 const mapStore = useMapStore()
@@ -63,6 +73,23 @@ const { trip_id, tripDate } = route.params
 async function getDayTripDestination(date: Date | string) {
   // call api to get this day destination
   await tripsStore.getDayDestinationAction(formatDateToUTC(date))
+}
+
+function clickDestinationHandler({ id, place_id }: { id: number; place_id: string }) {
+  tripsStore.setCurrentDestinationId(id)
+  const marker = mapStore.markers.filter((marker) => {
+    return marker.getTitle() === String(id)
+  })
+
+  googlePlacesService.value?.triggerMarkerHandler({
+    marker: marker[0],
+    place_id,
+    destinationId: id
+  })
+
+  // mapStore.stopMarkersAnimate()
+  // mapStore.setClickedPlaceId(place_id)
+  // googlePlacesService.value?.toggleBounce(marker[0])
 }
 
 onMounted(async () => {
@@ -131,6 +158,7 @@ watch(
         v-if="mapStore.getMap"
         @getDayTripDestination="getDayTripDestination"
         @editDayDetination="(data) => openDestinationFormHandler('edit', data)"
+        @clickDestinationHandler="clickDestinationHandler"
       >
         <DestinationPanel @addDestinationBtnClick="openDestinationFormHandler"></DestinationPanel>
       </SchedulePanel>

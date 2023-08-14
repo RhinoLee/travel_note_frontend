@@ -1,6 +1,8 @@
 import type { Ref } from 'vue'
 import { Loader } from '@googlemaps/js-api-loader'
 import useMapStore from '@/stores/map/map'
+import { DEFAULT_ZOOM_LEVEL } from './constants'
+
 const mapStore = useMapStore()
 
 // 掛載 Google Maps & Google Maps API 基本設定
@@ -10,7 +12,7 @@ export async function useGoogleMapsLoader(mapElement: Ref<HTMLElement | undefine
     version: 'weekly',
     language: 'zh-TW',
     region: 'TW',
-    libraries: ['places']
+    libraries: ['places', 'marker']
   })
 
   await loader.load()
@@ -18,7 +20,8 @@ export async function useGoogleMapsLoader(mapElement: Ref<HTMLElement | undefine
   const taiwanCenter = new google.maps.LatLng(23.97565, 120.9738819)
   const map = new google.maps.Map(mapElement.value as HTMLElement, {
     center: taiwanCenter,
-    zoom: 8
+    zoom: DEFAULT_ZOOM_LEVEL,
+    mapId: '1f3b2398b22831ea'
   })
 
   mapStore.setMap(map)

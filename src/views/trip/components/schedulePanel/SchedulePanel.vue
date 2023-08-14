@@ -5,7 +5,12 @@ import useMapStore from '@/stores/map/map'
 import useTripsStore from '@/stores/trips/trips'
 import type { IDayDestinationRes } from '@/services/trips/type'
 
-const emit = defineEmits(['addDestinationBtnClick', 'getDayTripDestination', 'editDayDetination'])
+const emit = defineEmits([
+  'addDestinationBtnClick',
+  'getDayTripDestination',
+  'editDayDetination',
+  'clickDestinationHandler'
+])
 
 const tripsStore = useTripsStore()
 const mapStore = useMapStore()
@@ -128,19 +133,27 @@ async function gptInputHandler() {
     <!-- 目的地排程 -->
     <div class="mt-[8px]">
       <!-- destination item -->
-      <div v-for="item in tripsStore.getDayDestinationsData" :key="item.id">
+      <div
+        v-for="item in tripsStore.getDayDestinationsData"
+        :key="item.id"
+        class="group cursor-pointer"
+        :class="{ active: item.id === tripsStore.currentDestinationId }"
+        @click="$emit('clickDestinationHandler', { id: item.id, place_id: item.place_id })"
+      >
         <!-- main item（destination info） -->
-        <div class="flex items-center border-y border-[var(--gray-color-2)] py-[14px] px-[2px]">
+        <div
+          class="flex items-center border-y border-[var(--gray-color-2)] py-[14px] px-[2px] group-[.active]:bg-[var(--main-brand-color-1)]"
+        >
           <!-- grab icon -->
           <div class="mr-[10px]">
             <img class="w-[12px]" src="@/assets/images/icon/grab_icon.svg" />
           </div>
           <!-- time & info -->
           <div class="flex flex-col grow gap-[8px]">
-            <span class="text-[var(--main-brand-color-1)]"
+            <span class="text-[var(--main-brand-color-1)] group-[.active]:text-white"
               >{{ item.arrival_time }} ~ {{ item.leave_time }}</span
             >
-            <span class="text-black">{{ item.name }}</span>
+            <span class="text-black group-[.active]:text-white">{{ item.name }}</span>
           </div>
           <!-- actions -->
           <div class="flex items-center gap-[6px]">
