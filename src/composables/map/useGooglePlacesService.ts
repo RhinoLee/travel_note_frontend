@@ -222,12 +222,12 @@ export function useGooglePlacesService(mapInstance: google.maps.Map) {
   }
 
   const calculateAndDisplayRoute = () => {
-    if (!tripsStore.getDayDestinationsRouteParmas) return
+    if (!tripsStore.getDayDestinationsRouteParams) return tripsStore.setDirectionsLeg([])
     directionsService
       .route({
-        origin: tripsStore.getDayDestinationsRouteParmas?.origin,
-        destination: tripsStore.getDayDestinationsRouteParmas?.destination,
-        waypoints: tripsStore.getDayDestinationsRouteParmas?.waypoints,
+        origin: tripsStore.getDayDestinationsRouteParams?.origin,
+        destination: tripsStore.getDayDestinationsRouteParams?.destination,
+        waypoints: tripsStore.getDayDestinationsRouteParams?.waypoints,
         optimizeWaypoints: false,
         unitSystem: google.maps.UnitSystem.METRIC,
         travelMode: google.maps.TravelMode.DRIVING

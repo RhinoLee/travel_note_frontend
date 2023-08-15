@@ -3,7 +3,12 @@ import { ref, reactive } from 'vue'
 import { useGooglePlacesService } from '@/composables/map/useGooglePlacesService'
 import useMapStore from '@/stores/map/map'
 import useTripsStore from '@/stores/trips/trips'
+import { formatDateToUTC } from '@/utils/formatDateTime'
 import type { IDayDestinationRes } from '@/services/trips/type'
+
+const props = defineProps<{
+  currentRouteDate: string
+}>()
 
 const emit = defineEmits([
   'addDestinationBtnClick',
@@ -12,6 +17,7 @@ const emit = defineEmits([
   'clickDestinationHandler'
 ])
 
+const currentSelectDate = ref(props.currentRouteDate)
 const tripsStore = useTripsStore()
 const mapStore = useMapStore()
 const request = reactive<google.maps.places.TextSearchRequest>({
@@ -61,6 +67,7 @@ async function gptInputHandler() {
 
 <template>
   <div class="relative px-[40px] py-[35px] h-full">
+    <!-- slot for destinaiton component -->
     <slot></slot>
     <!-- gpt input -->
     <div
@@ -119,6 +126,7 @@ async function gptInputHandler() {
     <div>
       <select
         class="border border-[var(--secondary-brand-color-1)] w-full text-[var(--dark-color-1) tracking-wider rounded-lg focus:outline-0 focus:ring-0 focus:border-[var(--secondary-brand-color-1)]"
+        v-model="currentSelectDate"
         @change="getDayTripDestination"
       >
         <option
@@ -146,7 +154,7 @@ async function gptInputHandler() {
         >
           <!-- grab icon -->
           <div class="mr-[10px]">
-            <img class="w-[12px]" src="@/assets/images/icon/grab_icon.svg" />
+            <!-- <img class="w-[12px]" src="@/assets/images/icon/grab_icon.svg" /> -->
           </div>
           <!-- time & info -->
           <div class="flex flex-col grow gap-[8px]">

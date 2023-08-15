@@ -138,6 +138,10 @@ const useTripsStore = defineStore({
     getTripDaysSelectOptions(): { date: string; weekday: string }[] {
       if (!this.currentTrip) return []
       const { start_date, end_date } = this.currentTrip
+      console.log(
+        'generateDateRange(start_date, end_date)',
+        generateDateRange(start_date, end_date)
+      )
 
       return generateDateRange(start_date, end_date)
     },
@@ -151,35 +155,23 @@ const useTripsStore = defineStore({
 
       return arr
     },
-    getDayDestinationsRouteParmas() {
+    // 整理 google maps directive api params
+    getDayDestinationsRouteParams() {
       if (!this.dayDestinationsData || this.dayDestinationsData.length < 2) return null
-      const origin: google.maps.Place = {
-        location: {
-          lat: this.dayDestinationsData[0].lat,
-          lng: this.dayDestinationsData[0].lng
-        }
-        // placeId: this.dayDestinationsData[0].place_id
-      }
-      const lastDestination = this.dayDestinationsData[this.dayDestinationsData.length - 1]
-      const destination: google.maps.Place = {
-        location: {
-          lat: lastDestination.lat,
-          lng: lastDestination.lng
-        }
-        // placeId: lastDestination.place_id
-      }
-      const waypoints: google.maps.DirectionsWaypoint[] = []
+      const destinations: IDayDestinationRes[] = this.dayDestinationsData
+      const [originData, ...rest] = destinations
+      const destinationData = rest.pop()
 
-      if (this.dayDestinationsData.length > 2) {
-        for (let i = 1; i < this.dayDestinationsData.length - 1; i++) {
-          waypoints.push({
-            location: {
-              lat: this.dayDestinationsData[i].lat,
-              lng: this.dayDestinationsData[i].lng
-            }
-          })
+      const convertData = (data: IDayDestinationRes) => ({
+        location: {
+          lat: data.lat,
+          lng: data.lng
         }
-      }
+      })
+
+      const origin = convertData(originData)
+      const destination = convertData(destinationData as IDayDestinationRes)
+      const waypoints = rest.map(convertData)
 
       return { origin, destination, waypoints }
     },

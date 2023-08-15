@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import SchedulePanel from './components/schedulePanel/SchedulePanel.vue'
 import DestinationPanel from './components/schedulePanel/DestinationPanel.vue'
 import { useGoogleMapsLoader } from '@/composables/map/useGoogleMapsLoader'
@@ -39,7 +39,11 @@ interface GooglePlacesService {
 const mapStore = useMapStore()
 const mapDom = ref<HTMLDivElement | undefined>(undefined)
 const googlePlacesService = ref<GooglePlacesService | null>(null)
-
+const currentRouteDate = ref('')
+const router = useRouter()
+const route = useRoute()
+const { trip_id, tripDate } = route.params
+currentRouteDate.value = tripDate as string
 const { formMadalRef, createClickHandler, editClickHandler } = useFormModal()
 
 // call 新增目的地 api
@@ -51,7 +55,10 @@ async function createSubmitHandler(data: any) {
 async function updateSubmitHandler(data: any) {
   tripsStore.setEditDayDestination(data)
   const result = await tripsStore.updateTripDayWithDestinationAction()
+  // 關閉表單
   if (result.success) formMadalRef.value?.setModalVisible()
+  // 重新取得當前日期的行程
+  await getDayTripDestination(currentRouteDate.value)
 }
 
 // 按下加入行程，打開 Form 讓 user 填資料
@@ -67,13 +74,13 @@ function openDestinationFormHandler(type: string = 'create', data?: any) {
   }
 }
 
-const route = useRoute()
-const { trip_id, tripDate } = route.params
-
 // 取得日期對應到的目的地行程
-async function getDayTripDestination(date: Date | string) {
+async function getDayTripDestination(date: string) {
+  currentRouteDate.value = date
   // 清除當前顯示的 path
   mapStore.displayDirectionPath(null)
+  // 設定 route
+  router.push({ name: 'trip', params: { tripDate: date as string } })
   // call api to get this day destination
   await tripsStore.getDayDestinationAction(formatDateToUTC(date))
 }
@@ -156,6 +163,7 @@ watch(
     <div class="w-full h-full">
       <SchedulePanel
         v-if="mapStore.getMap"
+        :currentRouteDate="currentRouteDate"
         @getDayTripDestination="getDayTripDestination"
         @editDayDetination="(data) => openDestinationFormHandler('edit', data)"
         @clickDestinationHandler="clickDestinationHandler"
