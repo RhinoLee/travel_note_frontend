@@ -1,21 +1,23 @@
 import { defineStore } from 'pinia'
 import { loginAPI } from '@/services/user'
-import type { ILoginParams } from '@/services/user/type'
 import { localStore } from '@/utils/webStorage'
-import { LOGIN_TOKEN } from '@/common/constants'
+import { getCookieValue } from '@/utils/getCookieValue'
+import { CSRF_TOKEN } from '@/common/constants'
 import { dynamicAddRoutes } from '@/utils/dynamicAddRoutes'
 import router from '@/router'
+import type { ILoginParams } from '@/services/user/type'
 
 interface IUserState {
   name: string
   userInfo: any
-  token: string
+  csrfToken: string
 }
 
 interface ILoginRes extends IUserState {
   success: boolean
   data: {
-    token: string
+    id: number
+    name: string
   }
 }
 
@@ -24,17 +26,26 @@ const useUserStore = defineStore({
   state: (): IUserState => ({
     name: '',
     userInfo: {},
-    token: ''
+    csrfToken: ''
   }),
   actions: {
+    setCsrfToken(token: string) {
+      this.csrfToken = token
+    },
     async loginAction(params: ILoginParams): Promise<ILoginRes | undefined> {
       try {
         const res: ILoginRes = await loginAPI(params)
 
         if (res.success) {
-          this.token = res.data.token
-          localStore.setItem(LOGIN_TOKEN, res.data.token)
+          // this.token = res.data.token
 
+          // 從 cookie 取得 csrf token
+          const csrfToken = getCookieValue('csrf_token')
+
+          if (!csrfToken) throw new Error('token required')
+          this.setCsrfToken(csrfToken)
+
+          // 登入成功動態加載路由
           dynamicAddRoutes()
 
           // go to home page
@@ -47,9 +58,9 @@ const useUserStore = defineStore({
       }
     },
     async loadWebStorageAction() {
-      const token = localStore.getItem(LOGIN_TOKEN)
-      if (token) {
-        this.token = token
+      const csrfToken = getCookieValue('csrf_token')
+      if (csrfToken) {
+        this.setCsrfToken(csrfToken)
         dynamicAddRoutes()
       }
     }

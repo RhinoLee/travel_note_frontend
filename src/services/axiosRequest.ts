@@ -1,7 +1,9 @@
 import axios from 'axios'
 import type { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios'
 import useErrorMessageStore from '@/stores/message/error'
+import useUserStore from '@/stores/user/user'
 import { BASE_URL } from './config'
+import { getCookieValue } from '@/utils/getCookieValue'
 
 class AxiosRequest {
   instance: AxiosInstance
@@ -28,6 +30,11 @@ class AxiosRequest {
     // 共用 interceptors
     this.instance.interceptors.request.use(
       (config: any) => {
+        const csrfToken = getCookieValue('csrf_token') || ''
+        config.headers = {
+          ...config.headers,
+          'X-CSRF-Token': csrfToken
+        }
         useErrorMessageStore().setMessage('')
         return config
       },

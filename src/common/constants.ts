@@ -1,4 +1,5 @@
 export const LOGIN_TOKEN = 'login_token'
+export const CSRF_TOKEN = 'csrf_token'
 export const MAIN_BRAND_COLOR_1 = '#145049'
 export const EDIT_SUCCESS_MESSAGE = '編輯成功'
 export const EDIT_FALIED_MESSAGE = '編輯失敗'
