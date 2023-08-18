@@ -1,6 +1,5 @@
 import $axios from '@/services'
 import { localStore } from '@/utils/webStorage'
-import { LOGIN_TOKEN } from '@/common/constants'
 
 import type { IRegisterParams, ILoginParams } from './type'
 
