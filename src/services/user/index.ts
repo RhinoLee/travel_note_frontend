@@ -18,6 +18,19 @@ export const loginAPI = (data: ILoginParams) => {
   })
 }
 
+export const getGoogleLoginUrlAPI = () => {
+  return $axios.get({
+    url: '/user/google_login_url'
+  })
+}
+
+export const googleLoginAPI = (data: { code: string }) => {
+  return $axios.post({
+    url: '/user/google_login',
+    data
+  })
+}
+
 // export const testApi = (data: any) => {
 //   const token = localStore.getItem(LOGIN_TOKEN)
 //   return $axios.post({

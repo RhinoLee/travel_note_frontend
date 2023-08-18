@@ -8,9 +8,14 @@ const loginData: ILoginParams = reactive({
   password: ''
 })
 
+const userStore = useUserStore()
+
 async function loginHandler() {
-  const userStore = useUserStore()
   const res = await userStore.loginAction(loginData)
+}
+
+async function getGoogleLoginUrl() {
+  const res = await userStore.getGoogleLoginUrlAction()
 }
 </script>
 
@@ -45,6 +50,12 @@ async function loginHandler() {
         class="mt-[25px] w-[144px] h-[40px] text-white text-base bg-[var(--main-brand-color-1)] shadow-custom rounded-md tracking-widest"
       >
         登入
+      </button>
+      <button
+        @click="getGoogleLoginUrl"
+        class="ml-[20px] mt-[25px] w-[144px] h-[40px] text-white text-base bg-[var(--main-brand-color-1)] shadow-custom rounded-md tracking-widest"
+      >
+        google 登入
       </button>
     </div>
   </div>

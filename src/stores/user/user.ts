@@ -1,8 +1,6 @@
 import { defineStore } from 'pinia'
-import { loginAPI } from '@/services/user'
-import { localStore } from '@/utils/webStorage'
+import { loginAPI, getGoogleLoginUrlAPI, googleLoginAPI } from '@/services/user'
 import { getCookieValue } from '@/utils/getCookieValue'
-import { CSRF_TOKEN } from '@/common/constants'
 import { dynamicAddRoutes } from '@/utils/dynamicAddRoutes'
 import router from '@/router'
 import type { ILoginParams } from '@/services/user/type'
@@ -55,6 +53,25 @@ const useUserStore = defineStore({
         return res
       } catch (error) {
         console.log(error)
+      }
+    },
+    async getGoogleLoginUrlAction() {
+      try {
+        const res = await getGoogleLoginUrlAPI()
+        if (res.success) {
+          location.href = res.data.login_url
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    async googleLoginAction(data: string) {
+      try {
+        const res = await googleLoginAPI({ code: data })
+        return res
+      } catch (err) {
+        console.log(err)
+        throw err
       }
     },
     async loadWebStorageAction() {

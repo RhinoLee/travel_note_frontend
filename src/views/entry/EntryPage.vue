@@ -26,7 +26,10 @@
         </div>
         <!-- login or register nav -->
         <nav class="mt-[44px] mb-[36px]">
-          <ul class="flex justify-center items-center gap-[52px] text-3xl text-[--gray-color-1]">
+          <ul
+            v-if="!isRedirectRoute"
+            class="flex justify-center items-center gap-[52px] text-3xl text-[--gray-color-1]"
+          >
             <li
               @click="changeRoute('login')"
               class="cursor-pointer"
@@ -59,10 +62,15 @@
 </template>
 
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
-import { useRouter } from 'vue-router'
+import { computed } from 'vue'
+import { useRouter, useRoute, RouterView } from 'vue-router'
 
 const router = useRouter()
+const route = useRoute()
+
+const isRedirectRoute = computed(() => {
+  return route.name === 'googleRedirectUrl'
+})
 
 function changeRoute(routesName: string) {
   router.push({ name: routesName })

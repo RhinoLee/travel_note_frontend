@@ -19,6 +19,11 @@ const router = createRouter({
           path: 'register',
           name: 'register',
           component: () => import('../views/entry/register/RegisterPage.vue')
+        },
+        {
+          path: 'google_redirect_url',
+          name: 'googleRedirectUrl',
+          component: () => import('../views/entry/googleRedirect/GoogleRedirect.vue')
         }
       ]
     }
@@ -34,6 +39,10 @@ router.beforeEach((to, from) => {
     if (!token) {
       return { name: 'login' }
     }
+  }
+  // 如果去到 redirect page，參數沒有 code 則導回登入頁
+  if (to.name === 'googleRedirectUrl' && !to.query.code) {
+    return { name: 'login' }
   }
 })
 
