@@ -12,8 +12,8 @@ import registerGlobalDirective from './directives'
 
 const app = createApp(App)
 
-app.use(registerPinia)
 app.use(router)
+app.use(registerPinia)
 app.use(Notifications)
 app.component('file-upload', VueUploadComponent)
 registerGlobalDirective(app)
