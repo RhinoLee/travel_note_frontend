@@ -8,7 +8,16 @@
       "settings": {
         "terminal.integrated.shell.linux": "/bin/zsh",
         "terminal.integrated.defaultProfile.linux": "zsh"
-      }
+      },
+      "extensions": [
+        "EditorConfig.EditorConfig",
+        "oderwat.indent-rainbow",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "Vue.vscode-typescript-vue-plugin",
+        "Vue.volar"
+      ]
     }
   }
 }
