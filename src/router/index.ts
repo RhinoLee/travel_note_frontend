@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { localStore } from '@/utils/webStorage'
 import { CSRF_TOKEN } from '@/common/constants'
 import { getCookieValue } from '@/utils/getCookieValue'
+import { dynamicAddRoutes } from '@/utils/dynamicAddRoutes'
+import useUserStore from '@/stores/user/user'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,13 +32,20 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach((to, from) => {
+router.beforeEach(async (to, from) => {
   console.log('to', to)
   console.log('from', from)
+
+  // 需要登入權限的頁面
   if (to.meta.requiresAuth) {
     const token = getCookieValue(CSRF_TOKEN)
     if (!token) {
       return { name: 'login' }
+    }
+    // get user info
+    const userStore = useUserStore()
+    if (!userStore.userInfo) {
+      await userStore.getUserInfoAction()
     }
   }
   // 如果去到 redirect page，參數沒有 code 則導回登入頁
@@ -45,5 +53,9 @@ router.beforeEach((to, from) => {
     return { name: 'login' }
   }
 })
+
+if (getCookieValue(CSRF_TOKEN)) {
+  dynamicAddRoutes(router)
+}
 
 export default router

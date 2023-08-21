@@ -5,8 +5,6 @@ const pinia = createPinia()
 
 function registerPinia(app: App<Element>) {
   app.use(pinia)
-  const userStore = useUserStore()
-  userStore.loadWebStorageAction()
 }
 
 export default registerPinia

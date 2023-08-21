@@ -1,14 +1,17 @@
 import { defineStore } from 'pinia'
-import { loginAPI, getGoogleLoginUrlAPI, googleLoginAPI } from '@/services/user'
-import { getCookieValue } from '@/utils/getCookieValue'
-import { dynamicAddRoutes } from '@/utils/dynamicAddRoutes'
+import { loginAPI, getGoogleLoginUrlAPI, googleLoginAPI, getUserInfoAPI } from '@/services/user'
 import router from '@/router'
+import { useStorage } from '@vueuse/core'
 import type { ILoginParams } from '@/services/user/type'
 
-interface IUserState {
+interface IUserInfo {
+  id: number | null
   name: string
+  avatar: string | null
+}
+
+interface IUserState {
   userInfo: any
-  csrfToken: string
 }
 
 interface ILoginRes extends IUserState {
@@ -22,29 +25,24 @@ interface ILoginRes extends IUserState {
 const useUserStore = defineStore({
   id: 'user',
   state: (): IUserState => ({
-    name: '',
-    userInfo: {},
-    csrfToken: ''
+    userInfo: useStorage('userInfo', { id: null, name: '', avatar: null } as IUserInfo)
   }),
   actions: {
-    setCsrfToken(token: string) {
-      this.csrfToken = token
+    storeUserDataToLocal(data: IUserInfo) {
+      const { id, name, avatar } = data
+      this.userInfo.id = id
+      this.userInfo.name = name
+      this.userInfo.avatar = avatar
     },
     async loginAction(params: ILoginParams): Promise<ILoginRes | undefined> {
       try {
         const res: ILoginRes = await loginAPI(params)
 
         if (res.success) {
-          // this.token = res.data.token
-
-          // 從 cookie 取得 csrf token
-          const csrfToken = getCookieValue('csrf_token')
-
-          if (!csrfToken) throw new Error('token required')
-          this.setCsrfToken(csrfToken)
-
+          // this.setUserName(res.data.name)
+          this.storeUserDataToLocal(res.data as IUserInfo)
           // 登入成功動態加載路由
-          dynamicAddRoutes()
+          // dynamicAddRoutes(router)
 
           // go to home page
           router.push({ name: 'home' })
@@ -68,17 +66,23 @@ const useUserStore = defineStore({
     async googleLoginAction(data: string) {
       try {
         const res = await googleLoginAPI({ code: data })
+        if (res.success) {
+          this.storeUserDataToLocal(res.data as IUserInfo)
+        }
         return res
       } catch (err) {
         console.log(err)
         throw err
       }
     },
-    async loadWebStorageAction() {
-      const csrfToken = getCookieValue('csrf_token')
-      if (csrfToken) {
-        this.setCsrfToken(csrfToken)
-        dynamicAddRoutes()
+    async getUserInfoAction() {
+      try {
+        const result = await getUserInfoAPI()
+        if (result.success) {
+          this.userInfo = useStorage('userInfo', result.data)
+        }
+      } catch (err) {
+        console.log('get user info action error: ', err)
       }
     }
   }

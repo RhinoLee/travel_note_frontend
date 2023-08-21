@@ -8,9 +8,6 @@ const router = useRouter()
 const userStore = useUserStore()
 
 onMounted(async () => {
-  console.log('google redirect page mounted')
-
-  console.log('route.query', route.query)
   // 如果有成功拿到 code，代表通過 google 登入驗證，把 code 傳給後端
   if (route.query.code) {
     // call api
@@ -19,11 +16,17 @@ onMounted(async () => {
       if (res.success) {
         router.push({ name: 'home' })
       } else {
+        console.log('login failed 1')
         router.push({ name: 'login' })
       }
     } catch (err) {
+      console.log('login failed 2')
+
       router.push({ name: 'login' })
     }
+  } else {
+    console.log('login failed 3')
+    router.push({ name: 'login' })
   }
 })
 </script>

@@ -30,6 +30,12 @@ export const googleLoginAPI = (data: { code: string }) => {
   })
 }
 
+export const getUserInfoAPI = () => {
+  return $axios.get({
+    url: '/'
+  })
+}
+
 // export const testApi = (data: any) => {
 //   const token = localStore.getItem(LOGIN_TOKEN)
 //   return $axios.post({
