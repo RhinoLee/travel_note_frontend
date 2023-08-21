@@ -38,7 +38,7 @@ const { formMadalRef, createClickHandler } = useFormModal()
 </script>
 
 <template>
-  <div class="container mx-auto px-[30px]">
+  <div class="container mx-auto py-[50px] px-[30px]">
     <!-- title -->
     <h2 class="mb-[4px] text-[var(--main-brand-color-1)] text-2xl">規劃行程</h2>
     <!-- add schedule button -->

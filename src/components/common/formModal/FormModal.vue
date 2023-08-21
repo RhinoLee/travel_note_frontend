@@ -99,10 +99,10 @@ defineExpose({
   <div v-if="isModalVisible" class="fixed top-0 left-0 w-full h-full bg-black/10 z-50">
     <div @click.self="(event) => setModalVisible()" class="relative w-full h-full">
       <div
-        class="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-[300px] md:w-[530px] bg-white rounded-lg overflow-hidden shadow-lg overflow-y-auto"
+        class="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-[300px] max-h-[500px] bg-white rounded-lg overflow-scroll shadow-lg overflow-y-auto md:w-[530px] md:max-h-auto"
       >
         <header
-          class="flex items-center border-b-[1px] px-[20px] py-[12px] text-[var(--main-brand-color-1)]"
+          class="sticky top-0 flex items-center border-b-[1px] px-[20px] py-[12px] text-[var(--main-brand-color-1)] z-10 bg-white"
         >
           <h4 class="text-lg md:text-xl">{{ props.modalTitle }}</h4>
           <button
@@ -113,7 +113,7 @@ defineExpose({
           </button>
         </header>
         <div v-if="previewFile && previewFile.blob">
-          <img :src="previewFile.blob" class="w-full max-h-[230px] object-cover object-center" />
+          <img :src="previewFile.blob" class="w-full max-h-[200px] object-cover object-center" />
         </div>
         <div class="mx-auto px-[20px] py-[15px] min-h-[100px] space-y-[20px]">
           <div v-for="formField in formFields" :key="formField.prop">
@@ -178,7 +178,9 @@ defineExpose({
             </template>
           </div>
         </div>
-        <footer class="flex justify-end border-t-[1px] px-[20px] py-[12px]">
+        <footer
+          class="sticky bottom-0 flex justify-end border-t-[1px] px-[20px] py-[12px] z-10 bg-white"
+        >
           <button
             @click="submitHandler"
             class="ml-auto px-[20px] py-[6px] bg-[var(--main-brand-color-1)] text-white text-xs md:text-sm rounded-lg"
