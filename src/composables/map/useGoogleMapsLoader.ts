@@ -24,7 +24,8 @@ export async function useGoogleMapsLoader(mapElement: Ref<HTMLElement | undefine
   const map = new google.maps.Map(mapElement.value as HTMLElement, {
     center: taiwanCenter,
     zoom: DEFAULT_ZOOM_LEVEL,
-    mapId: '1f3b2398b22831ea'
+    mapId: '1f3b2398b22831ea',
+    disableDefaultUI: true
   })
 
   directionsRenderer.setMap(map)

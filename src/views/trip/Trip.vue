@@ -45,6 +45,7 @@ const route = useRoute()
 const { trip_id, tripDate } = route.params
 currentRouteDate.value = tripDate as string
 const { formMadalRef, createClickHandler, editClickHandler } = useFormModal()
+const schedulePanelRef = ref<InstanceType<typeof SchedulePanel> | null>(null)
 
 // call 新增目的地 api
 async function createSubmitHandler(data: any) {
@@ -96,6 +97,9 @@ function clickDestinationHandler({ id, place_id }: { id: number; place_id: strin
     place_id,
     destinationId: id
   })
+
+  // 手機版：關閉 schedule panel
+  schedulePanelRef.value?.setVisable()
 }
 
 onMounted(async () => {
@@ -158,22 +162,32 @@ watch(
 </script>
 
 <template>
-  <div class="grid grid-cols-[400px_1fr] w-full h-full">
+  <div class="lg:grid lg:grid-cols-[400px_1fr] w-full h-full">
     <!-- panel -->
-    <div class="w-full h-full">
+    <div class="absolute top-[53px] left-0 h-full z-10 lg:relative lg:top-0 lg:w-full">
       <SchedulePanel
+        ref="schedulePanelRef"
         v-if="mapStore.getMap"
         :currentRouteDate="currentRouteDate"
         @getDayTripDestination="getDayTripDestination"
         @editDayDetination="(data) => openDestinationFormHandler('edit', data)"
         @clickDestinationHandler="clickDestinationHandler"
       >
-        <DestinationPanel @addDestinationBtnClick="openDestinationFormHandler"></DestinationPanel>
       </SchedulePanel>
+      <DestinationPanel @addDestinationBtnClick="openDestinationFormHandler"></DestinationPanel>
     </div>
     <!-- map -->
     <div class="w-full h-full">
       <div class="w-full h-full" ref="mapDom"></div>
+    </div>
+    <!-- panel trigger -->
+    <div class="absolute left-0 top-[150px] z-40 lg:hidden">
+      <button
+        @click="schedulePanelRef?.setVisable()"
+        class="border-y border-r py-[8px] px-[4px] text-[var(--gray-color-2)] bg-[var(--secondary-brand-color-1)] [writing-mode:vertical-rl] tracking-[4px] rounded-r-md"
+      >
+        行程選單
+      </button>
     </div>
   </div>
 

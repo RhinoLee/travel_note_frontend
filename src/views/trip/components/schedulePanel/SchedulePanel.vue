@@ -63,12 +63,20 @@ const gptInput = ref('')
 async function gptInputHandler() {
   mapStore.getOpenAPICompletion(gptInput.value)
 }
+
+const isVisable = ref(false)
+function setVisable() {
+  isVisable.value = !isVisable.value
+}
+
+defineExpose({ setVisable })
 </script>
 
 <template>
-  <div class="relative px-[40px] py-[35px] h-full">
-    <!-- slot for destinaiton component -->
-    <slot></slot>
+  <div
+    :class="{ 'translate-x-[0]': isVisable, 'translate-x-[-100%]': !isVisable }"
+    class="absolute left-0 top-0 border-r-2 border-[var(--secondary-brand-color-1)] px-[40px] py-[35px] w-[300px] h-full overflow-hidden ease-out duration-300 z-30 bg-white/95 lg:w-full lg:px-[40px] lg:relative lg:translate-x-[0%]"
+  >
     <!-- gpt input -->
     <div
       class="flex items-center justify-center border border-[var(--main-brand-color-1)] mb-[20px] py-[8px] px-[10px] rounded-lg"
@@ -106,6 +114,7 @@ async function gptInputHandler() {
         <input
           class="border-none px-[12px] w-full"
           type="text"
+          enterkeyhint="search"
           placeholder="搜尋目的地"
           v-model.trim="request.query"
           @keyup.enter="searchPlaceHandler"

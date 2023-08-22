@@ -157,6 +157,7 @@ const useTripsStore = defineStore({
     },
     // 整理 google maps directive api params
     getDayDestinationsRouteParams() {
+      // 如果沒有目的地或目的地少於兩個，不用規劃路徑
       if (!this.dayDestinationsData || this.dayDestinationsData.length < 2) return null
       const destinations: IDayDestinationRes[] = this.dayDestinationsData
       const [originData, ...rest] = destinations

@@ -34,11 +34,13 @@ function closePanel() {
 <template>
   <div
     v-if="getClickedPlaceDetail && isVisibled"
-    class="absolute left-[420px] top-[50%] translate-y-[-50%] w-[360px] h-[780px] bg-white rounded-lg z-20 overflow-hidden"
+    class="absolute top-[10px] left-[30px] w-[270px] h-[calc(100% - 53px)] bg-white/80 rounded-lg z-20 overflow-hidden lg:left-[420px] lg:top-[50%] lg:translate-y-[-50%] lg:w-[360px] lg:h-[780px]"
   >
-    <div class="w-full h-full">
+    <div class="w-full h-full overflow-y-auto">
       <!-- panel header -->
-      <header class="flex justify-between py-[10px] px-[20px] bg-[var(--green-color-1)]">
+      <header
+        class="flex justify-between py-[10px] px-[26px] bg-[var(--green-color-1)] lg:px-[20px]"
+      >
         <button @click="closePanel"><img src="@/assets/images/icon/pure_cancel_icon.svg" /></button>
         <button
           @click="$emit('addDestinationBtnClick')"
@@ -48,7 +50,7 @@ function closePanel() {
           <span class="ml-[4px]">加入行程</span>
         </button>
       </header>
-      <div class="px-[20px] py-[10px]">
+      <div class="px-[26px] py-[10px] lg:px-[20px]">
         <!-- place title -->
         <div class="mb-[10px]">
           <h3 class="text-2xl text-[var(--main-brand-color-1)]">
