@@ -11,8 +11,8 @@ const dropdownHandler: OnClickOutsideHandler = (event) => {
   isVisable.value = false
 }
 
-function setDropdownVisable() {
-  isVisable.value = !isVisable.value
+function setDropdownVisable(e: PointerEvent | null, status: boolean) {
+  isVisable.value = status ?? !isVisable.value
 }
 
 defineExpose({

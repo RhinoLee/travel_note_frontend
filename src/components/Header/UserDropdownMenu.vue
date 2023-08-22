@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { RouterLink } from 'vue-router'
 import { vOnClickOutside } from '@vueuse/components'
 
 import type { OnClickOutsideHandler } from '@vueuse/core'
 
 const isVisable = ref(false)
 
-function setDropdownVisable() {
-  isVisable.value = !isVisable.value
+function setDropdownVisable(e: PointerEvent | null, status: boolean) {
+  console.log('setDropdownVisable', status, !isVisable.value)
+
+  isVisable.value = status ?? !isVisable.value
 }
 
 const dropdownHandler: OnClickOutsideHandler = (event) => {
@@ -27,7 +30,7 @@ defineExpose({
   >
     <ul class="w-full">
       <li>
-        <div class="px-[24px] py-[8px]">會員中心</div>
+        <router-link class="block px-[24px] py-[8px]" :to="{ name: 'user' }">會員中心</router-link>
       </li>
       <li class="border-t border-[var(--secondary-brand-color-1)]">
         <div class="px-[24px] py-[8px] text-red-800">登出</div>

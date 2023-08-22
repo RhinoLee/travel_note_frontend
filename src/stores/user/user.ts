@@ -8,6 +8,7 @@ interface IUserInfo {
   id: number | null
   name: string
   avatar: string | null
+  email: string
 }
 
 interface IUserState {
@@ -25,14 +26,15 @@ interface ILoginRes extends IUserState {
 const useUserStore = defineStore({
   id: 'user',
   state: (): IUserState => ({
-    userInfo: useStorage('userInfo', { id: null, name: '', avatar: null } as IUserInfo)
+    userInfo: useStorage('userInfo', { id: null, name: '', avatar: null, email: '' } as IUserInfo)
   }),
   actions: {
     storeUserDataToLocal(data: IUserInfo) {
-      const { id, name, avatar } = data
+      const { id, name, avatar, email } = data
       this.userInfo.id = id
       this.userInfo.name = name
       this.userInfo.avatar = avatar
+      this.userInfo.email = email
     },
     async loginAction(params: ILoginParams): Promise<ILoginRes | undefined> {
       try {

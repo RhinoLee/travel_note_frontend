@@ -2,7 +2,7 @@
   <div class="w-full h-full grid grid-cols-1 lg:grid-cols-2">
     <!-- banner section -->
     <div
-      class="relative min-h-[350px] bg-[url('@/assets/images/img_loginbg.webp')] bg-no-repeat bg-cover bg-center"
+      class="relative bg-[url('@/assets/images/img_loginbg.webp')] bg-no-repeat bg-cover bg-center"
     >
       <!-- logo -->
       <div>
@@ -13,7 +13,9 @@
         />
       </div>
       <!-- opacity-logo-bg -->
-      <div class="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
+      <div
+        class="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] max-h-[250px] md:max-h-[350px]"
+      >
         <img src="@/assets/images/icon/logo_opacity_icon.svg" class="w-[148px] lg:w-[297px]" />
       </div>
     </div>

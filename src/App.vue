@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { RouterView, useRoute } from 'vue-router'
+import { RouterView, useRoute, onBeforeRouteUpdate } from 'vue-router'
 import Modal from '@/components/common/Modal.vue'
 import Header from '@/components/Header/Header.vue'
 
