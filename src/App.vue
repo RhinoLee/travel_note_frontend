@@ -7,7 +7,7 @@ import Header from '@/components/Header/Header.vue'
 const route = useRoute()
 
 // 不要有 header 的 router name
-const noRenderHeaderList = ['login']
+const noRenderHeaderList = ['login', 'notFound']
 const showHeader = computed(() => {
   if (!route.name) return false
   return !noRenderHeaderList.includes(route.name as any)

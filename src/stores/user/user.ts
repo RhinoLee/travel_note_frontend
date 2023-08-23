@@ -43,8 +43,6 @@ const useUserStore = defineStore({
         if (res.success) {
           // this.setUserName(res.data.name)
           this.storeUserDataToLocal(res.data as IUserInfo)
-          // 登入成功動態加載路由
-          // dynamicAddRoutes(router)
 
           // go to home page
           router.push({ name: 'home' })

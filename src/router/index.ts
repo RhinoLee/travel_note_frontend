@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { CSRF_TOKEN } from '@/common/constants'
 import { getCookieValue } from '@/utils/getCookieValue'
-import { dynamicAddRoutes } from '@/utils/dynamicAddRoutes'
 import useUserStore from '@/stores/user/user'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    { path: '/', redirect: { name: 'home' } },
     {
       path: '/entry',
       name: 'entry',
@@ -28,6 +28,32 @@ const router = createRouter({
           component: () => import('../views/entry/googleRedirect/GoogleRedirect.vue')
         }
       ]
+    },
+    {
+      path: '/home',
+      name: 'home',
+      component: () => import('@/views/home/Home.vue'),
+      children: [],
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/trip/:trip_id/:tripDate',
+      name: 'trip',
+      component: () => import('@/views/trip/Trip.vue'),
+      children: [],
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/user',
+      name: 'user',
+      component: () => import('@/views/user/UserPage.vue'),
+      children: [],
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'notFound',
+      component: () => import('../views/notFound/NotFound.vue')
     }
   ]
 })
@@ -53,9 +79,5 @@ router.beforeEach(async (to, from) => {
     return { name: 'login' }
   }
 })
-
-if (getCookieValue(CSRF_TOKEN)) {
-  dynamicAddRoutes(router)
-}
 
 export default router
