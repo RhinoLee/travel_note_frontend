@@ -184,7 +184,7 @@ watch(
     <div class="absolute left-0 top-[150px] z-40 lg:hidden">
       <button
         @click="schedulePanelRef?.setVisable()"
-        class="border-y border-r py-[8px] px-[4px] text-[var(--gray-color-2)] bg-[var(--secondary-brand-color-1)] [writing-mode:vertical-rl] tracking-[4px] rounded-r-md"
+        class="border-y border-r py-[4px] px-[8px] rotate-90 origin-bottom-left text-[var(--gray-color-2)] bg-[var(--secondary-brand-color-1)] tracking-[4px] rounded-t-md"
       >
         行程選單
       </button>
