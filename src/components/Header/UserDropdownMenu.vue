@@ -2,9 +2,11 @@
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { vOnClickOutside } from '@vueuse/components'
+import useUserStore from '@/stores/user/user'
 
 import type { OnClickOutsideHandler } from '@vueuse/core'
 
+const userStore = useUserStore()
 const isVisable = ref(false)
 
 function setDropdownVisable(e: PointerEvent | null, status: boolean) {
@@ -33,7 +35,9 @@ defineExpose({
         <router-link class="block px-[24px] py-[8px]" :to="{ name: 'user' }">會員中心</router-link>
       </li>
       <li class="border-t border-[var(--secondary-brand-color-1)]">
-        <div class="px-[24px] py-[8px] text-red-800">登出</div>
+        <div @click="userStore.logoutAction" class="px-[24px] py-[8px] text-red-800 cursor-pointer">
+          登出
+        </div>
       </li>
     </ul>
   </div>

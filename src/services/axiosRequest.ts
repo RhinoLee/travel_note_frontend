@@ -2,6 +2,7 @@ import axios from 'axios'
 import type { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios'
 import useErrorMessageStore from '@/stores/message/error'
 import useUserStore from '@/stores/user/user'
+import router from '@/router/'
 import { BASE_URL } from './config'
 import { getCookieValue } from '@/utils/getCookieValue'
 
@@ -48,11 +49,12 @@ class AxiosRequest {
         return res
       },
       (error: any) => {
-        if (error.isAxiosError) {
+        // 401 直接登出
+        if (error.response.status === 401) {
+          useUserStore().storeUserDataToLocal(null)
+          router.push({ name: 'login' })
+        } else if (error.isAxiosError) {
           useErrorMessageStore().setMessage(error.message)
-        }
-        if (error.response.status === 404) {
-          console.log('404')
         }
         return Promise.reject(error)
       }

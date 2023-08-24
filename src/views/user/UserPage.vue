@@ -4,7 +4,6 @@ import useUserStore from '@/stores/user/user'
 import DefaultAvatar from '@/assets/images/icon/default_avatar_icon.svg'
 import FormModal from '@/components/common/formModal/FormModal.vue'
 import useFormModal from '@/composables/modal/useFormModal'
-import AvatarEditModal from './components/AvatarEditModal.vue'
 import { schema, formFields } from './config/formFields'
 
 import type { IUpdateUserParams } from '@/services/user/type'
@@ -17,8 +16,6 @@ watch(
   (newVal) => (userEditInfo.value = { ...newVal }),
   { immediate: true, deep: true }
 )
-
-const avatarEditModalRef = ref<InstanceType<typeof AvatarEditModal> | null>(null)
 
 const { formMadalRef, editClickHandler } = useFormModal()
 
@@ -36,10 +33,9 @@ async function updateSubmitHandler(data: any) {
   if (result.success) formMadalRef.value?.setModalVisible()
 }
 
-// onMounted(() => {
-//   userEditInfo.value.name = userStore.userInfo.name
-//   userEditInfo.value.avatar = [userStore.userInfo.avatar]
-// })
+onMounted(async () => {
+  await userStore.getUserInfoAction()
+})
 </script>
 
 <template>
@@ -110,7 +106,6 @@ async function updateSubmitHandler(data: any) {
       @updateSubmit="updateSubmitHandler"
     >
     </FormModal>
-    <!-- <AvatarEditModal ref="avatarEditModalRef"></AvatarEditModal> -->
   </div>
 </template>
 

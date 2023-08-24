@@ -40,3 +40,9 @@ export const updateUserInfoAPI = (data: FormData) => {
     data
   })
 }
+
+export const logoutAPI = () => {
+  return $axios.post({
+    url: '/user/logout'
+  })
+}

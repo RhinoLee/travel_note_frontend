@@ -4,7 +4,8 @@ import {
   getGoogleLoginUrlAPI,
   googleLoginAPI,
   getUserInfoAPI,
-  updateUserInfoAPI
+  updateUserInfoAPI,
+  logoutAPI
 } from '@/services/user'
 import router from '@/router'
 import { useStorage } from '@vueuse/core'
@@ -35,12 +36,19 @@ const useUserStore = defineStore({
     userInfo: useStorage('userInfo', { id: null, name: '', avatar: null, email: '' } as IUserInfo)
   }),
   actions: {
-    storeUserDataToLocal(data: IUserInfo) {
-      const { id, name, avatar, email } = data
-      this.userInfo.id = id
-      this.userInfo.name = name
-      this.userInfo.avatar = avatar
-      this.userInfo.email = email
+    storeUserDataToLocal(data: IUserInfo | null) {
+      if (data) {
+        const { id, name, avatar, email } = data
+        this.userInfo.id = id
+        this.userInfo.name = name
+        this.userInfo.avatar = avatar
+        this.userInfo.email = email
+      } else if (data === null) {
+        this.userInfo.id = null
+        this.userInfo.name = ''
+        this.userInfo.avatar = null
+        this.userInfo.email = ''
+      }
     },
     async loginAction(params: ILoginParams): Promise<ILoginRes | undefined> {
       try {
@@ -85,7 +93,7 @@ const useUserStore = defineStore({
       try {
         const result = await getUserInfoAPI()
         if (result.success) {
-          this.userInfo = useStorage('userInfo', result.data)
+          this.storeUserDataToLocal(result.data)
         }
       } catch (err) {
         console.log('get user info action error: ', err)
@@ -114,6 +122,15 @@ const useUserStore = defineStore({
       } catch (err) {
         console.log('update user info action error: ', err)
       }
+    },
+    async logoutAction() {
+      // call api 讓後端清空 cookie
+      await logoutAPI()
+      // init localstorage 資料
+      this.storeUserDataToLocal(null)
+
+      // 回 login page
+      router.push({ name: 'login' })
     }
   }
 })
