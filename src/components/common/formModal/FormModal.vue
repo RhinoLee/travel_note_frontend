@@ -4,6 +4,7 @@ import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { useFileUpload } from '@/composables/fileUpload/useFileUpload'
 import { useFormValidation } from '@/composables/validation/useFormValidation'
+import DefaultAvatar from '@/assets/images/icon/default_avatar_icon.svg'
 import type { IModalProps, IFormModalData } from './config/types'
 
 // 這個組件會透過上層 formFields 配置文件，來產生對應的表單欄位
@@ -58,8 +59,15 @@ function setModalVisible(isCreate: boolean = true, itemData: any = {}) {
   if (!isCreate) {
     buttonText.value = '更新'
     for (const key in formData) {
-      formData[key] = itemData[key]
+      // image 類型如果是 null 要轉換成 ['']，給 vue-upload-component 做 v-model 綁定
+      if (key === 'avatar') {
+        if (!Array.isArray(itemData[key])) itemData[key] = [itemData[key]]
+        formData[key] = itemData[key][0] ? itemData[key] : ['']
+      } else {
+        formData[key] = itemData[key]
+      }
     }
+    console.log(itemData)
     editData.value = itemData
   } else {
     // 新增模式
@@ -74,6 +82,10 @@ function setModalVisible(isCreate: boolean = true, itemData: any = {}) {
 
 // file upload
 const { previewFile, inputFile, inputFilter, upload } = useFileUpload()
+
+function clearFile(prop: string) {
+  formData[prop] = ['']
+}
 
 // modal submit
 async function submitHandler() {
@@ -96,7 +108,7 @@ defineExpose({
 </script>
 
 <template>
-  <div v-if="isModalVisible" class="fixed top-0 left-0 w-full h-full bg-black/10 z-50">
+  <div v-show="isModalVisible" class="fixed top-0 left-0 w-full h-full bg-black/10 z-50">
     <div @click.self="(event) => setModalVisible()" class="relative w-full h-full">
       <div
         class="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-[300px] max-h-[500px] bg-white rounded-lg overflow-scroll shadow-lg overflow-y-auto md:w-[530px] md:max-h-auto"
@@ -112,12 +124,51 @@ defineExpose({
             <img src="@/assets/images/icon/cancel_icon.svg" alt="close" />
           </button>
         </header>
-        <div v-if="previewFile && previewFile.blob">
-          <img :src="previewFile.blob" class="w-full max-h-[200px] object-cover object-center" />
-        </div>
+        <!-- 表單主要內容 -->
         <div class="mx-auto px-[20px] py-[15px] min-h-[100px] space-y-[20px]">
           <div v-for="formField in formFields" :key="formField.prop">
             <template v-if="formField.type === 'singleFile'">
+              <!-- 預覽圖片區域 -->
+              <div v-if="previewFile && previewFile.blob">
+                <img
+                  :src="previewFile.blob"
+                  class="w-full max-h-[200px] object-cover object-center"
+                />
+              </div>
+              <label class="form-modal-label" :for="formField.prop">{{ formField.title }}</label>
+              <file-upload
+                ref="upload"
+                v-model="formData[formField.prop]"
+                @input-file="inputFile"
+                @input-filter="inputFilter"
+              >
+                <button
+                  class="ml-auto px-[20px] py-[6px] bg-[var(--main-brand-color-1)] text-white text-xs md:text-sm rounded-lg"
+                >
+                  上傳圖片
+                </button>
+              </file-upload>
+            </template>
+            <template v-if="formField.type === 'avatar'">
+              <!-- 預覽圖片區域 -->
+              <div
+                v-if="(previewFile && previewFile.blob) || formData[formField.prop]"
+                class="relative mb-[16px]"
+              >
+                <img
+                  v-default-image="DefaultAvatar"
+                  :src="previewFile?.blob || formData[formField.prop][0] || DefaultAvatar"
+                  class="w-[108px] h-[108px] rounded-full object-cover object-center overflow-hidden"
+                  alt=""
+                />
+                <!-- delete icon -->
+                <div
+                  @click="clearFile(formField.prop)"
+                  class="absolute bottom-[4px] left-[78px] flex items-center justify-center w-[32px] h-[32px] bg-[var(--green-color-1)] rounded-full overflow-hidden cursor-pointer"
+                >
+                  <img src="@/assets/images/icon/edit_icon.svg" />
+                </div>
+              </div>
               <label class="form-modal-label" :for="formField.prop">{{ formField.title }}</label>
               <file-upload
                 ref="upload"

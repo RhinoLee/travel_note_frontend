@@ -58,7 +58,7 @@ watch(
             <img
               v-default-image="DefaultAvatar"
               :src="userStore.userInfo?.avatar"
-              class="w-[24px] rounded-full overflow-hidden"
+              class="w-[24px] h-[24px] object-cover object-center rounded-full overflow-hidden"
               alt=""
             />
           </div>

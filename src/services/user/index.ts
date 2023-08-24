@@ -1,7 +1,5 @@
 import $axios from '@/services'
-import { localStore } from '@/utils/webStorage'
-
-import type { IRegisterParams, ILoginParams } from './type'
+import type { IRegisterParams, ILoginParams, IUpdateUserParams } from './type'
 
 export const registerAPI = (data: IRegisterParams) => {
   return $axios.post({
@@ -32,17 +30,13 @@ export const googleLoginAPI = (data: { code: string }) => {
 
 export const getUserInfoAPI = () => {
   return $axios.get({
-    url: '/'
+    url: '/user'
   })
 }
 
-// export const testApi = (data: any) => {
-//   const token = localStore.getItem(LOGIN_TOKEN)
-//   return $axios.post({
-//     url: '/test',
-//     data: { ...data },
-//     headers: {
-//       Authorization: `Bearer ${token}`
-//     }
-//   })
-// }
+export const updateUserInfoAPI = (data: FormData) => {
+  return $axios.put({
+    url: '/user',
+    data
+  })
+}

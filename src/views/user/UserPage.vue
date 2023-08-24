@@ -1,7 +1,45 @@
 <script setup lang="ts">
+import { onMounted, ref, watch } from 'vue'
 import useUserStore from '@/stores/user/user'
 import DefaultAvatar from '@/assets/images/icon/default_avatar_icon.svg'
+import FormModal from '@/components/common/formModal/FormModal.vue'
+import useFormModal from '@/composables/modal/useFormModal'
+import AvatarEditModal from './components/AvatarEditModal.vue'
+import { schema, formFields } from './config/formFields'
+
+import type { IUpdateUserParams } from '@/services/user/type'
+
 const userStore = useUserStore()
+const userEditInfo = ref<{ name: string; avatar: any }>({ name: '', avatar: null })
+
+watch(
+  () => userStore.userInfo,
+  (newVal) => (userEditInfo.value = { ...newVal }),
+  { immediate: true, deep: true }
+)
+
+const avatarEditModalRef = ref<InstanceType<typeof AvatarEditModal> | null>(null)
+
+const { formMadalRef, editClickHandler } = useFormModal()
+
+async function updateSubmitHandler(data: any) {
+  const params: IUpdateUserParams = { name: data.name, avatar: null }
+
+  if (typeof data.avatar[0] === 'string') {
+    params.avatar = data.avatar[0]
+  } else if (typeof data.avatar[0] === 'object') {
+    params.avatar = data.avatar[0].file
+  }
+
+  const result = await userStore.updateUserInfoAction(params)
+  // 關閉表單
+  if (result.success) formMadalRef.value?.setModalVisible()
+}
+
+// onMounted(() => {
+//   userEditInfo.value.name = userStore.userInfo.name
+//   userEditInfo.value.avatar = [userStore.userInfo.avatar]
+// })
 </script>
 
 <template>
@@ -17,21 +55,21 @@ const userStore = useUserStore()
         <img src="@/assets/images/icon/logo_opacity_icon.svg" class="w-[148px] lg:w-[297px]" />
       </div>
     </div>
-    <!-- login form section -->
+    <!-- user info section -->
     <div class="bg-white pt-[44px] lg:pt-0 lg:pb-[30px] lg:pl-[20%]">
       <div class="flex flex-col px-[24px] pt-0 h-full lg:pt-[18%]">
         <h2
           class="mb-[28px] text-[26px] text-[var(--main-brand-color-1)] tracking-widest md:text-[32px] lg:mb-[54px]"
         >
-          個人賬戶
+          個人資料
         </h2>
         <!-- avatar -->
         <div class="mb-[28px] lg:mb-[54px]">
-          <div>
+          <div class="relative mb-[16px]">
             <img
               v-default-image="DefaultAvatar"
-              :src="userStore.userInfo?.avatar"
-              class="w-[88px] rounded-full overflow-hidden"
+              :src="userStore.userInfo?.avatar || DefaultAvatar"
+              class="w-[108px] h-[108px] rounded-full object-cover object-center overflow-hidden"
               alt=""
             />
           </div>
@@ -51,8 +89,28 @@ const userStore = useUserStore()
             <span class="break-word md:ml-[16px]">{{ userStore.userInfo.email }}</span>
           </div>
         </div>
+
+        <!-- button -->
+        <div class="flex justify-start mt-[24px]">
+          <button
+            @click="editClickHandler(userEditInfo)"
+            class="px-[20px] py-[6px] bg-[var(--main-brand-color-1)] text-white text-xs md:text-sm rounded-lg"
+          >
+            編輯
+          </button>
+        </div>
       </div>
     </div>
+
+    <FormModal
+      ref="formMadalRef"
+      modalTitle="編輯個人資訊"
+      :formFields="formFields"
+      :schema="schema"
+      @updateSubmit="updateSubmitHandler"
+    >
+    </FormModal>
+    <!-- <AvatarEditModal ref="avatarEditModalRef"></AvatarEditModal> -->
   </div>
 </template>
 

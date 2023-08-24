@@ -17,24 +17,13 @@ interface IFileUpload {
 export function useFileUpload(): IFileUpload {
   const upload = ref<InstanceType<typeof VueUploadComponent> | null>(null)
   const previewFile = ref<any>(null)
-  /**
-   * Has changed
-   * @param  Object|undefined   newFile   Read only
-   * @param  Object|undefined   oldFile   Read only
-   * @return undefined
-   */
+
   function inputFile(newFile: VueUploadItem | undefined, oldFile: VueUploadItem | undefined) {
     console.log('newFile', newFile)
     console.log('oldFile', oldFile)
     previewFile.value = newFile
   }
-  /**
-   * Pretreatment
-   * @param  Object|undefined   newFile   Read and write
-   * @param  Object|undefined   oldFile   Read only
-   * @param  Function           prevent   Prevent changing
-   * @return undefined
-   */
+
   function inputFilter(
     newFile: VueUploadItem | undefined,
     oldFile: VueUploadItem | undefined,

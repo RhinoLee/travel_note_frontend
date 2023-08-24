@@ -1,8 +1,14 @@
 import { defineStore } from 'pinia'
-import { loginAPI, getGoogleLoginUrlAPI, googleLoginAPI, getUserInfoAPI } from '@/services/user'
+import {
+  loginAPI,
+  getGoogleLoginUrlAPI,
+  googleLoginAPI,
+  getUserInfoAPI,
+  updateUserInfoAPI
+} from '@/services/user'
 import router from '@/router'
 import { useStorage } from '@vueuse/core'
-import type { ILoginParams } from '@/services/user/type'
+import type { ILoginParams, IUpdateUserParams } from '@/services/user/type'
 
 interface IUserInfo {
   id: number | null
@@ -83,6 +89,30 @@ const useUserStore = defineStore({
         }
       } catch (err) {
         console.log('get user info action error: ', err)
+      }
+    },
+    async updateUserInfoAction(data: IUpdateUserParams) {
+      const formData = new FormData()
+
+      Object.keys(data).forEach((key) => {
+        if (key === 'name') {
+          formData.append(key, data[key])
+        } else if (key === 'avatar') {
+          const avatarData = data[key] ?? null
+          formData.append(key, avatarData as any)
+        }
+      })
+
+      try {
+        const result = await updateUserInfoAPI(formData)
+        if (result.success) {
+          const { avatar, name } = result.data
+          this.userInfo.avatar = avatar
+          this.userInfo.name = name
+        }
+        return result
+      } catch (err) {
+        console.log('update user info action error: ', err)
       }
     }
   }
