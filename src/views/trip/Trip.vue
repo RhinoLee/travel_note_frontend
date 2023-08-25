@@ -164,7 +164,7 @@ watch(
 <template>
   <div class="lg:grid lg:grid-cols-[400px_1fr] w-full h-full">
     <!-- panel -->
-    <div class="absolute top-[53px] left-0 h-full z-10 lg:relative lg:top-0 lg:w-full">
+    <div class="absolute top-[53px] left-0 h-[calc(100%-53px)] z-10 lg:relative lg:top-0 lg:w-full">
       <SchedulePanel
         ref="schedulePanelRef"
         v-if="mapStore.getMap"

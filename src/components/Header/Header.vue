@@ -29,7 +29,9 @@ watch(
 </script>
 
 <template>
-  <header class="relative border-b border-[var(--secondary-brand-color-1)] h-[54px] bg-white z-50">
+  <header
+    class="fixed top-0 left-0 border-b border-[var(--secondary-brand-color-1)] w-full h-[54px] bg-white z-50"
+  >
     <div class="relative w-full h-full bg-white z-40">
       <div class="flex items-center py-[14px] px-[24px] w-full h-full">
         <!-- buger menu -->

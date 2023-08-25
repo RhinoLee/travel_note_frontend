@@ -7,7 +7,7 @@ import Header from '@/components/Header/Header.vue'
 const route = useRoute()
 
 // 不要有 header 的 router name
-const noRenderHeaderList = ['login', 'notFound']
+const noRenderHeaderList = ['login', 'register', 'notFound']
 const showHeader = computed(() => {
   if (!route.name) return false
   return !noRenderHeaderList.includes(route.name as any)
@@ -18,7 +18,9 @@ const showHeader = computed(() => {
   <Notifications />
   <Modal />
   <Header v-if="showHeader"></Header>
-  <RouterView />
+  <div :class="{ 'pt-[53px]': showHeader }" class="w-full h-full">
+    <RouterView />
+  </div>
 </template>
 
 <style scoped></style>

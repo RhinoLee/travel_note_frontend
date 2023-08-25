@@ -42,7 +42,7 @@ onMounted(async () => {
   <div class="w-full h-full grid grid-cols-1 lg:grid-cols-2">
     <!-- banner section -->
     <div
-      class="relative bg-[url('@/assets/images/img_loginbg.webp')] bg-no-repeat bg-cover bg-center"
+      class="relative h-[200px] bg-[url('@/assets/images/img_loginbg.webp')] bg-no-repeat bg-cover bg-center md:h-[250px] lg:h-full"
     >
       <!-- opacity-logo-bg -->
       <div
@@ -52,7 +52,7 @@ onMounted(async () => {
       </div>
     </div>
     <!-- user info section -->
-    <div class="bg-white pt-[44px] lg:pt-0 lg:pb-[30px] lg:pl-[20%]">
+    <div class="bg-white pt-[44px] pb-[50px] lg:pt-0 lg:pb-[30px] lg:pl-[20%]">
       <div class="flex flex-col px-[24px] pt-0 h-full lg:pt-[18%]">
         <h2
           class="mb-[28px] text-[26px] text-[var(--main-brand-color-1)] tracking-widest md:text-[32px] lg:mb-[54px]"

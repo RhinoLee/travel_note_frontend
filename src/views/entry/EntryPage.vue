@@ -1,8 +1,8 @@
 <template>
-  <div class="w-full h-full grid grid-cols-1 lg:grid-cols-2">
+  <div class="w-full h-full grid lg:grid-cols-2">
     <!-- banner section -->
     <div
-      class="relative bg-[url('@/assets/images/img_loginbg.webp')] bg-no-repeat bg-cover bg-center"
+      class="relative h-[200px] bg-[url('@/assets/images/img_loginbg.webp')] bg-no-repeat bg-cover bg-center md:h-[250px] lg:h-full"
     >
       <!-- logo -->
       <div>
@@ -21,13 +21,13 @@
     </div>
     <!-- login form section -->
     <div class="bg-white pb-[30px]">
-      <div class="flex flex-col items-center px-[24px] pt-0 h-full lg:pt-[18%]">
+      <div class="flex flex-col items-center px-[24px] pt-0 h-full lg:pt-[12%]">
         <!-- logo -->
         <div class="hidden lg:block">
           <img src="@/assets/images/icon/big_logo_icon.svg" class="w-[80px] h-auto" />
         </div>
         <!-- login or register nav -->
-        <nav class="mt-[44px] mb-[36px]">
+        <nav class="mt-[24px] mb-[18px] lg:mt-[44px] lg:mb-[36px]">
           <ul
             v-if="!isRedirectRoute"
             class="flex justify-center items-center gap-[52px] text-3xl text-[--gray-color-1]"

@@ -3,7 +3,6 @@ import { ref, reactive } from 'vue'
 import { useGooglePlacesService } from '@/composables/map/useGooglePlacesService'
 import useMapStore from '@/stores/map/map'
 import useTripsStore from '@/stores/trips/trips'
-import { formatDateToUTC } from '@/utils/formatDateTime'
 import type { IDayDestinationRes } from '@/services/trips/type'
 
 const props = defineProps<{
@@ -75,7 +74,7 @@ defineExpose({ setVisable })
 <template>
   <div
     :class="{ 'translate-x-[0]': isVisable, 'translate-x-[-100%]': !isVisable }"
-    class="absolute left-0 top-0 border-r-2 border-[var(--secondary-brand-color-1)] px-[40px] py-[35px] w-[300px] h-full overflow-hidden ease-out duration-300 z-30 bg-white/95 lg:w-full lg:px-[40px] lg:relative lg:translate-x-[0%]"
+    class="absolute left-0 top-0 border-r-2 border-[var(--secondary-brand-color-1)] px-[40px] py-[35px] w-[300px] h-full overflow-hidden ease-out duration-300 z-30 bg-white/95 overflow-y-auto lg:w-full lg:px-[40px] lg:relative lg:translate-x-[0%]"
   >
     <!-- gpt input -->
     <div
@@ -134,7 +133,9 @@ defineExpose({ setVisable })
       >
     </div>
     <div class="mt-[24px] mb-[8px]">
-      <h2 class="text-[var(--main-brand-color-1)] text-2xl tracking-wider">旅行名稱</h2>
+      <h2 class="text-[var(--main-brand-color-1)] text-[20px] md:text-2xl tracking-wider">
+        {{ tripsStore.currentTrip?.name }}
+      </h2>
     </div>
     <!-- date selector -->
     <div>
