@@ -126,7 +126,12 @@ defineExpose({ setVisable })
     </div>
     <div class="flex items-center mt-[8px]">
       <img class="mr-[6px]" src="@/assets/images/icon/motor_icon.svg" />
-      <a class="text-[var(--blue-color-1)] text-sm tracking-wider" href="#">google 導航行程</a>
+      <a
+        class="text-[var(--blue-color-1)] text-sm tracking-wider"
+        :href="tripsStore.getDayDestainationsGoogleURL"
+        target="_blank"
+        >google 導航行程</a
+      >
     </div>
     <div class="mt-[24px] mb-[8px]">
       <h2 class="text-[var(--main-brand-color-1)] text-2xl tracking-wider">旅行名稱</h2>

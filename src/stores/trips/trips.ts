@@ -182,6 +182,52 @@ const useTripsStore = defineStore({
       const id = this.currentDayDestination.id
 
       return { trip_id, id }
+    },
+    getDayDestainationsGoogleURL() {
+      if (!this.dayDestinationsData || !this.dayDestinationsData.length) return ''
+
+      // google map link 範例
+      // https://www.google.com/maps/dir/?api=1
+      // &origin=Paris%2CFrance&destination=Cherbourg%2CFrance&
+      // travelmode=driving
+      // &waypoints=Versailles%2CFrance%7CChartres%2CFrance%7CLe+Mans%2CFrance%7CCaen%2CFrance
+      // &waypoint_place_ids=ChIJdUyx15R95kcRj85ZX8H8OAU%7CChIJKzGHdEgM5EcR_OBTT3nQoEA%7CChIJG2LvQNCI4kcRKXNoAsPi1Mc%7CChIJ06tnGbxCCkgRsfNjEQMwUsc
+
+      let googleMapLink = 'https://www.google.com/maps/dir/?api=1'
+      const destinations: IDayDestinationRes[] = this.dayDestinationsData
+      // 起點
+      const origin = destinations[0]
+      // 只有起點
+      googleMapLink += `&origin=${origin.name}&origin_place_id=${origin.place_id}`
+
+      // 終點
+      const destination = destinations[destinations.length - 1]
+      // 只有起點跟終點
+      if (destinations.length > 1) {
+        googleMapLink += `&destination=${destination.name}&destination_place_id=${destination.place_id}`
+      }
+
+      // 有 waypoints（中繼站）
+      if (destinations.length > 2) {
+        let waypointNameStr = '&waypoints='
+        let waypointIdStr = '&waypoint_place_ids='
+        const [first, ...waypoints] = destinations
+        waypoints.pop()
+        waypoints.forEach((waypoint, index) => {
+          if (index < waypoints.length - 1) {
+            waypointNameStr += `${waypoint.name},`
+            waypointIdStr += `${waypoint.place_id},`
+          } else {
+            waypointNameStr += `${waypoint.name}`
+            waypointIdStr += `${waypoint.place_id}`
+          }
+        })
+
+        googleMapLink += waypointNameStr + waypointIdStr
+      }
+
+      const encoded = encodeURI(googleMapLink)
+      return encoded
     }
   },
   actions: {
