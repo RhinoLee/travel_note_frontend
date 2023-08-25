@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { toRaw } from 'vue'
-import { completionAPI } from '@/services/open_ai'
 import {
   DESTINATION_MARKERS_TYPE,
   SEARCH_MARKERS_TYPE,

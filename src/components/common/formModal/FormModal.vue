@@ -172,7 +172,7 @@ defineExpose({
                   @click="clearFile(formField.prop)"
                   class="absolute bottom-[4px] left-[78px] flex items-center justify-center w-[32px] h-[32px] bg-[var(--green-color-1)] rounded-full overflow-hidden cursor-pointer"
                 >
-                  <img src="@/assets/images/icon/edit_icon.svg" />
+                  <img src="@/assets/images/icon/delete_icon.svg" />
                 </div>
               </div>
               <label class="form-modal-label" :for="formField.prop">{{ formField.title }}</label>

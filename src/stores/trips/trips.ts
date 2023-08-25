@@ -4,7 +4,9 @@ import {
   EDIT_SUCCESS_MESSAGE,
   EDIT_FALIED_MESSAGE,
   CREATE_SUCCESS_MESSAGE,
-  CREATE_FAILED_MESSAGE
+  CREATE_FAILED_MESSAGE,
+  DELETE_SUCCESS_MESSAGE,
+  DELETE_FALIED_MESSAGE
 } from '@/common/constants'
 
 import {
@@ -13,7 +15,8 @@ import {
   getTripApi,
   createTripDayApi,
   getTripDayWithDestinationAPI,
-  updateTripDayWithDestinationAPI
+  updateTripDayWithDestinationAPI,
+  deleteDestinationAPI
 } from '@/services/trips'
 import {
   formatTime,
@@ -352,6 +355,20 @@ const useTripsStore = defineStore({
       } catch (err) {
         console.log(err)
         notify({ type: 'error', text: EDIT_FALIED_MESSAGE })
+        throw err
+      }
+    },
+    async deleteDayDetinationAction(destination_id: number) {
+      try {
+        const result = await deleteDestinationAPI(destination_id)
+        if (result.success) {
+          notify({ type: 'success', text: DELETE_SUCCESS_MESSAGE })
+        } else {
+          notify({ type: 'error', text: DELETE_FALIED_MESSAGE })
+        }
+        return result
+      } catch (err) {
+        notify({ type: 'error', text: DELETE_FALIED_MESSAGE })
         throw err
       }
     }

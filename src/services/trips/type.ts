@@ -65,6 +65,7 @@ export type IDayDestinationParmas = Pick<IDayTripParams, 'trip_id' | 'trip_date'
 
 export interface IDayDestinationRes {
   id: number
+  destination_id: number
   arrival_time: string
   leave_time: string
   visit_order: number

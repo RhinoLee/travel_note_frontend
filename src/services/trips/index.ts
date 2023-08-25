@@ -11,7 +11,6 @@ const userStore = useUserStore()
 
 export const createTripAPI = (data: FormData | null) => {
   if (!data) return new Error('data is null')
-  // if (!userStore.token) return new Error('token is null')
 
   return $axios.post({
     url: '/trip',
@@ -19,16 +18,12 @@ export const createTripAPI = (data: FormData | null) => {
   })
 }
 export const getTripsApi = ({ limit, page }: IListParams) => {
-  // if (!userStore.token) return new Error('token is null')
-
   return $axios.get({
     url: `/trip/list?limit=${limit}&page=${page}`
   })
 }
 
 export const getTripApi = (trip_id: string) => {
-  // if (!userStore.token) return new Error('token is null')
-
   return $axios.get({
     url: `/trip?trip_id=${trip_id}`
   })
@@ -53,9 +48,12 @@ export const updateTripDayWithDestinationAPI = (data: IUpdateDayDestinationParam
   return $axios.put({
     url: `/trip/${data.trip_id}/${data.id}`,
     data: { arrival_time, leave_time, name, trip_date }
-    // headers: {
-    //   // Authorization: `Bearer ${userStore.token}`
-    //   'X-CSRF-Token': userStore.csrfToken
-    // }
+  })
+}
+
+export const deleteDestinationAPI = (destination_id: number) => {
+  return $axios.delete({
+    url: `/trip/destination`,
+    data: { destination_id }
   })
 }

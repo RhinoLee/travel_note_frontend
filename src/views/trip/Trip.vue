@@ -51,15 +51,30 @@ const schedulePanelRef = ref<InstanceType<typeof SchedulePanel> | null>(null)
 async function createSubmitHandler(data: any) {
   tripsStore.setTripDayData(data)
   const result = await tripsStore.createTripDayAction()
-  if (result.success) formMadalRef.value?.setModalVisible()
+  if (result.success) {
+    formMadalRef.value?.setModalVisible()
+    // 重新取得當前日期的行程
+    await getDayTripDestination(currentRouteDate.value)
+  }
 }
+// 編輯目的地
 async function updateSubmitHandler(data: any) {
   tripsStore.setEditDayDestination(data)
   const result = await tripsStore.updateTripDayWithDestinationAction()
   // 關閉表單
-  if (result.success) formMadalRef.value?.setModalVisible()
-  // 重新取得當前日期的行程
-  await getDayTripDestination(currentRouteDate.value)
+  if (result.success) {
+    // 重新取得當前日期的行程
+    await getDayTripDestination(currentRouteDate.value)
+  }
+}
+// 刪除目的地
+async function deleteDayDetination(destination_id: number) {
+  const result = await tripsStore.deleteDayDetinationAction(destination_id)
+
+  if (result.success) {
+    // 重新取得當前日期的行程
+    await getDayTripDestination(currentRouteDate.value)
+  }
 }
 
 // 按下加入行程，打開 Form 讓 user 填資料
@@ -171,6 +186,7 @@ watch(
         :currentRouteDate="currentRouteDate"
         @getDayTripDestination="getDayTripDestination"
         @editDayDetination="(data) => openDestinationFormHandler('edit', data)"
+        @deleteDayDetination="deleteDayDetination"
         @clickDestinationHandler="clickDestinationHandler"
       >
       </SchedulePanel>

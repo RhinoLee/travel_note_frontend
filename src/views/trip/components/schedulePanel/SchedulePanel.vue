@@ -13,6 +13,7 @@ const emit = defineEmits([
   'addDestinationBtnClick',
   'getDayTripDestination',
   'editDayDetination',
+  'deleteDayDetination',
   'clickDestinationHandler'
 ])
 
@@ -55,6 +56,10 @@ function editDayDetination(data: IDayDestinationRes) {
     trip_date: data.trip_date
   }
   emit('editDayDetination', computedData)
+}
+
+function deleteDayDetination(destination_id: number) {
+  emit('deleteDayDetination', destination_id)
 }
 
 // GPT input
@@ -185,7 +190,7 @@ defineExpose({ setVisable })
               <img class="w-[24px]" src="@/assets/images/icon/edit_icon.svg" />
             </button>
             <!-- delete -->
-            <button>
+            <button @click.stop="deleteDayDetination(item.destination_id)">
               <img class="w-[24px]" src="@/assets/images/icon/cancel_bold_icon.svg" />
             </button>
           </div>
