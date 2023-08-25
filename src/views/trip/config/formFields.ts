@@ -7,8 +7,8 @@ export function formFieldsHandler({ start_date, end_date }: any): IFormField[] {
     {
       prop: 'name',
       title: '目的地名稱',
-      type: 'text',
-      placeholder: '請輸入目的地名稱',
+      type: 'pureText',
+      placeholder: '',
       initValue: '',
       refFields: []
     },

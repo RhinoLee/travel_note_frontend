@@ -100,7 +100,7 @@ onMounted(async () => {
 
     <FormModal
       ref="formMadalRef"
-      modalTitle="編輯個人資訊"
+      modalTitle="個人資訊"
       :formFields="formFields"
       :schema="schema"
       @updateSubmit="updateSubmitHandler"

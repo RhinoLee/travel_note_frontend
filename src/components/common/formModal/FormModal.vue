@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toRaw, reactive, ref, watch } from 'vue'
+import { toRaw, reactive, ref, watch, computed } from 'vue'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { useFileUpload } from '@/composables/fileUpload/useFileUpload'
@@ -102,6 +102,12 @@ async function submitHandler() {
   }
 }
 
+// modal title
+const formModalTitle = computed(() => {
+  const prefix = isCreateModal.value ? '新增' : '編輯'
+  return prefix + props.modalTitle
+})
+
 defineExpose({
   setModalVisible
 })
@@ -116,7 +122,7 @@ defineExpose({
         <header
           class="sticky top-0 flex items-center border-b-[1px] px-[20px] py-[12px] text-[var(--main-brand-color-1)] z-10 bg-white"
         >
-          <h4 class="text-lg md:text-xl">{{ props.modalTitle }}</h4>
+          <h4 class="text-lg md:text-xl">{{ formModalTitle }}</h4>
           <button
             @click="(event) => setModalVisible()"
             class="flex items-center justify-center ml-auto w-[24px] h-[24px] text-lg md:text-xl"
@@ -182,6 +188,17 @@ defineExpose({
                   上傳圖片
                 </button>
               </file-upload>
+            </template>
+            <!-- 純文字，無輸入匡 -->
+            <template v-if="formField.type === 'pureText'">
+              <div>
+                <label class="form-modal-label" :for="formField.prop">{{ formField.title }}</label>
+                <div
+                  class="block border-[var(--gray-color-1)] mt-1 py-2 w-full h-[36px] rounded-md"
+                >
+                  {{ formData[formField.prop] }}
+                </div>
+              </div>
             </template>
             <template v-if="formField.type === 'text'">
               <div>

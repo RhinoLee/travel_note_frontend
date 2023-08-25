@@ -193,7 +193,7 @@ watch(
 
   <FormModal
     ref="formMadalRef"
-    modalTitle="新增目的地"
+    modalTitle="目的地"
     :formFields="customFormFields"
     :schema="schema"
     @createSubmit="createSubmitHandler"
