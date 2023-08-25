@@ -17,11 +17,11 @@ const router = createRouter({
           name: 'login',
           component: () => import('../views/entry/login/LoginPage.vue')
         },
-        {
-          path: 'register',
-          name: 'register',
-          component: () => import('../views/entry/register/RegisterPage.vue')
-        },
+        // {
+        //   path: 'register',
+        //   name: 'register',
+        //   component: () => import('../views/entry/register/RegisterPage.vue')
+        // },
         {
           path: 'google_redirect_url',
           name: 'googleRedirectUrl',

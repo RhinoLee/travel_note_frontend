@@ -42,7 +42,7 @@
             >
               登入
             </li>
-            <li
+            <!-- <li
               @click="changeRoute('register')"
               class="cursor-pointer"
               :class="{
@@ -51,7 +51,7 @@
               }"
             >
               註冊
-            </li>
+            </li> -->
           </ul>
         </nav>
         <!-- form -->
