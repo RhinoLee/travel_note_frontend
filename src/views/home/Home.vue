@@ -56,7 +56,7 @@ const { formMadalRef, createClickHandler } = useFormModal()
     <!-- create/edit Modal -->
     <FormModal
       ref="formMadalRef"
-      modalTitle="新增旅程"
+      modalTitle="旅程"
       :formFields="formFields"
       :schema="schema"
       @createSubmit="createSubmitHandler"

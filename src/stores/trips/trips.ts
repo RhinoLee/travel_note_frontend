@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { notify } from '@kyvg/vue3-notification'
+import { usePagination } from '@/composables/pagination/usePagination'
 import {
   EDIT_SUCCESS_MESSAGE,
   EDIT_FALIED_MESSAGE,
@@ -16,7 +17,8 @@ import {
   createTripDayApi,
   getTripDayWithDestinationAPI,
   updateTripDayWithDestinationAPI,
-  deleteDestinationAPI
+  deleteDestinationAPI,
+  deleteTripAPI
 } from '@/services/trips'
 import {
   formatTime,
@@ -290,12 +292,28 @@ const useTripsStore = defineStore({
         throw err
       }
     },
-    async getTripAction(trip_id: string) {
+    async getTripAction(trip_id: number) {
       try {
         const result = await getTripApi(trip_id)
         this.setCurrentTrip(result.data)
       } catch (err) {
         console.log('getTripAction err', err)
+        throw err
+      }
+    },
+    async deleteTripAction(tripId: number) {
+      console.log('tripId', tripId)
+
+      try {
+        const result = await deleteTripAPI(tripId)
+        if (result.success) {
+          notify({ type: 'success', text: DELETE_SUCCESS_MESSAGE })
+        } else {
+          notify({ type: 'error', text: DELETE_FALIED_MESSAGE })
+        }
+        return result
+      } catch (err) {
+        notify({ type: 'error', text: DELETE_FALIED_MESSAGE })
         throw err
       }
     },

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { RouterView, useRoute, onBeforeRouteUpdate } from 'vue-router'
-import Modal from '@/components/common/Modal.vue'
+import { RouterView, useRoute } from 'vue-router'
 import Header from '@/components/Header/Header.vue'
 
 const route = useRoute()
@@ -16,7 +15,6 @@ const showHeader = computed(() => {
 
 <template>
   <Notifications />
-  <Modal />
   <Header v-if="showHeader"></Header>
   <div :class="{ 'pt-[53px]': showHeader }" class="w-full h-full">
     <RouterView />

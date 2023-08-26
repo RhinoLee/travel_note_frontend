@@ -23,9 +23,15 @@ export const getTripsApi = ({ limit, page }: IListParams) => {
   })
 }
 
-export const getTripApi = (trip_id: string) => {
+export const getTripApi = (trip_id: number) => {
   return $axios.get({
     url: `/trip?trip_id=${trip_id}`
+  })
+}
+
+export const deleteTripAPI = (trip_id: number) => {
+  return $axios.delete({
+    url: `/trip/${trip_id}`
   })
 }
 
