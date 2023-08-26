@@ -127,7 +127,7 @@ onMounted(async () => {
   }
 
   try {
-    await tripsStore.getTripAction(trip_id as string)
+    await tripsStore.getTripAction(Number(trip_id))
 
     // 取得 trip 資訊，把相關資訊給 formFields 做 date, years range 設定
     customFormFields.value = formFieldsHandler({
