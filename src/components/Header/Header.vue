@@ -35,7 +35,9 @@ watch(
     <div class="relative w-full h-full bg-white z-40">
       <div class="flex items-center py-[14px] px-[24px] w-full h-full">
         <!-- buger menu -->
-        <BurgerMenu @click.stop="burgerDropdownMenuRef?.setDropdownVisable"></BurgerMenu>
+        <div class="w-[24px]">
+          <!-- <BurgerMenu @click.stop="burgerDropdownMenuRef?.setDropdownVisable"></BurgerMenu> -->
+        </div>
         <!-- logo -->
         <div class="w-[94px] mx-auto md:mx-0 md:w-[200px]">
           <router-link :to="{ name: 'home' }" v-slot="{ href, navigate }" custom>
@@ -48,7 +50,7 @@ watch(
         </div>
         <!-- search -->
         <div class="hidden md:block md:grow">
-          <SearchBar></SearchBar>
+          <!-- <SearchBar></SearchBar> -->
         </div>
         <!-- user info -->
         <div
