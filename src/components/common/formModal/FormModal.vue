@@ -5,6 +5,7 @@ import '@vuepic/vue-datepicker/dist/main.css'
 import { useFileUpload } from '@/composables/fileUpload/useFileUpload'
 import { useFormValidation } from '@/composables/validation/useFormValidation'
 import DefaultAvatar from '@/assets/images/icon/default_avatar_icon.svg'
+import useGlobalStore from '@/stores/global/global'
 import type { IModalProps, IFormModalData } from './config/types'
 
 // 這個組件會透過上層 formFields 配置文件，來產生對應的表單欄位
@@ -19,6 +20,7 @@ const props = withDefaults(defineProps<IModalProps>(), {
   modalBanner: ''
 })
 
+const globalStore = useGlobalStore()
 const isCreateModal = ref(true)
 const editData = ref()
 const buttonText = ref('')
@@ -252,6 +254,7 @@ defineExpose({
           <button
             @click="submitHandler"
             class="ml-auto px-[20px] py-[6px] bg-[var(--main-brand-color-1)] text-white text-xs md:text-sm rounded-lg"
+            :disabled="globalStore.isLoading"
           >
             {{ buttonText }}
           </button>

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import type { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios'
-import useErrorMessageStore from '@/stores/message/error'
 import useUserStore from '@/stores/user/user'
+import useGlobalStore from '@/stores/global/global'
 import router from '@/router/'
 import { BASE_URL } from './config'
 import { getCookieValue } from '@/utils/getCookieValue'
@@ -36,7 +36,7 @@ class AxiosRequest {
           ...config.headers,
           'X-CSRF-Token': csrfToken
         }
-        useErrorMessageStore().setMessage('')
+        useGlobalStore().isLoading = true
         return config
       },
       (error: any) => {
@@ -46,15 +46,15 @@ class AxiosRequest {
 
     this.instance.interceptors.response.use(
       (res: any) => {
+        useGlobalStore().isLoading = false
         return res
       },
       (error: any) => {
+        useGlobalStore().isLoading = false
         // 401 直接登出
         if (error.response.status === 401) {
           useUserStore().storeUserDataToLocal(null)
           router.push({ name: 'login' })
-        } else if (error.isAxiosError) {
-          useErrorMessageStore().setMessage(error.message)
         }
         return Promise.reject(error)
       }
