@@ -83,7 +83,6 @@ function closePanel() {
           <div v-if="getClickedPlaceDetail.customOpeningHours">
             <h5>營業時間：</h5>
             <div>
-              <!-- open time item -->
               <div v-for="(item, idx) in getClickedPlaceDetail.customOpeningHours" :key="idx">
                 <span>星期{{ item.day }}</span>
                 <span>：</span>

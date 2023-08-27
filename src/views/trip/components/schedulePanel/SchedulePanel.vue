@@ -3,6 +3,7 @@ import { ref, reactive } from 'vue'
 import { useGooglePlacesService } from '@/composables/map/useGooglePlacesService'
 import useMapStore from '@/stores/map/map'
 import useTripsStore from '@/stores/trips/trips'
+import { formatDateToUTC } from '@/utils/formatDateTime'
 import type { IDayDestinationRes } from '@/services/trips/type'
 
 const props = defineProps<{
@@ -22,7 +23,7 @@ const tripsStore = useTripsStore()
 const mapStore = useMapStore()
 const request = reactive<google.maps.places.TextSearchRequest>({
   radius: 500,
-  query: '台東森林公園'
+  query: ''
 })
 
 function searchPlaceHandler() {
@@ -65,7 +66,14 @@ function deleteDayDetination(destination_id: number) {
 // GPT input
 const gptInput = ref('')
 async function gptInputHandler() {
-  mapStore.getOpenAPICompletion(gptInput.value)
+  if (!tripsStore.currentTrip?.id) return
+  const params = {
+    trip_date: formatDateToUTC(currentSelectDate.value),
+    trip_id: tripsStore.currentTrip.id,
+    query: gptInput.value
+  }
+
+  await tripsStore.createAITripDayAction(params)
 }
 
 const isVisable = ref(false)
@@ -82,6 +90,9 @@ defineExpose({ setVisable })
     class="absolute left-0 top-0 border-r-2 border-[var(--secondary-brand-color-1)] px-[40px] py-[35px] w-[300px] h-full overflow-hidden ease-out duration-300 z-30 bg-white/95 overflow-y-auto lg:w-full lg:px-[40px] lg:relative lg:translate-x-[0%]"
   >
     <!-- gpt input -->
+    <label class="block mb-[4px] text-[var(--main-brand-color-1)]" for="gptInput"
+      >GPT 規劃目的地</label
+    >
     <div
       class="flex items-center justify-center border border-[var(--main-brand-color-1)] mb-[20px] py-[8px] px-[10px] rounded-lg"
     >
@@ -95,7 +106,9 @@ defineExpose({ setVisable })
         <input
           class="border-none px-[12px] w-full0"
           type="text"
-          placeholder="gpt input"
+          enterkeyhint="search"
+          placeholder="輸入地名，EX：台東"
+          id="gptInput"
           v-model.trim="gptInput"
           @keyup.enter="gptInputHandler"
         />
@@ -105,6 +118,9 @@ defineExpose({ setVisable })
       </button>
     </div>
     <!-- search google place -->
+    <label class="block mb-[4px] text-[var(--main-brand-color-1)]" for="normalInput"
+      >手動搜尋目的地</label
+    >
     <div
       class="flex items-center justify-center border border-[var(--main-brand-color-1)] py-[8px] px-[10px] rounded-lg"
     >
@@ -120,6 +136,7 @@ defineExpose({ setVisable })
           type="text"
           enterkeyhint="search"
           placeholder="搜尋目的地"
+          id="normalInput"
           v-model.trim="request.query"
           @keyup.enter="searchPlaceHandler"
         />

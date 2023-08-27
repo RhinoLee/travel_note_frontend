@@ -92,3 +92,7 @@ export type IUpdateDayDestinationId = Pick<IDayDestinationRes, 'trip_id' | 'id'>
 export interface IDestinationWithDistanceInfo extends IDayDestinationRes {
   leg?: google.maps.DirectionsLeg
 }
+
+export type CreateAITripDayParams = Pick<IDayDestinationRes, 'trip_id' | 'trip_date'> & {
+  query: string
+}

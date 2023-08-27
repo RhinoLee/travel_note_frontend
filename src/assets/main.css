@@ -48,3 +48,13 @@ body {
 .map-main-label {
   margin-bottom: 12px;
 }
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 0;
+  }
+}

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
 import Header from '@/components/Header/Header.vue'
+import Loading from '@/components/common/Loading.vue'
 
 const route = useRoute()
 
@@ -19,6 +20,7 @@ const showHeader = computed(() => {
   <div :class="{ 'pt-[53px]': showHeader }" class="w-full h-full">
     <RouterView />
   </div>
+  <Loading></Loading>
 </template>
 
 <style scoped></style>

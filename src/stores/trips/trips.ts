@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { notify } from '@kyvg/vue3-notification'
-import { usePagination } from '@/composables/pagination/usePagination'
 import {
   EDIT_SUCCESS_MESSAGE,
   EDIT_FALIED_MESSAGE,
@@ -18,7 +17,8 @@ import {
   getTripDayWithDestinationAPI,
   updateTripDayWithDestinationAPI,
   deleteDestinationAPI,
-  deleteTripAPI
+  deleteTripAPI,
+  createAITripDayAPI
 } from '@/services/trips'
 import {
   formatTime,
@@ -38,7 +38,8 @@ import type {
   IDayDestinationRes,
   IDestinationWithDistanceInfo,
   IEditDayDestination,
-  IUpdateDayDestinationId
+  IUpdateDayDestinationId,
+  CreateAITripDayParams
 } from '@/services/trips/type'
 
 interface IState {
@@ -219,16 +220,20 @@ const useTripsStore = defineStore({
         const [first, ...waypoints] = destinations
         waypoints.pop()
         waypoints.forEach((waypoint, index) => {
+          console.log('waypoint', waypoint)
+
           if (index < waypoints.length - 1) {
-            waypointNameStr += `${waypoint.name},`
-            waypointIdStr += `${waypoint.place_id},`
+            waypointNameStr += `${waypoint.name}|`
+            waypointIdStr += `${waypoint.place_id}|`
           } else {
             waypointNameStr += `${waypoint.name}`
             waypointIdStr += `${waypoint.place_id}`
           }
         })
+        const waypointsStr = waypointNameStr + waypointIdStr
+        console.log('waypointsStr', waypointsStr)
 
-        googleMapLink += waypointNameStr + waypointIdStr
+        googleMapLink += waypointsStr
       }
 
       const encoded = encodeURI(googleMapLink)
@@ -387,6 +392,21 @@ const useTripsStore = defineStore({
         return result
       } catch (err) {
         notify({ type: 'error', text: DELETE_FALIED_MESSAGE })
+        throw err
+      }
+    },
+    async createAITripDayAction(data: CreateAITripDayParams) {
+      try {
+        const result = await createAITripDayAPI(data)
+        if (result.success) {
+          notify({ type: 'success', text: CREATE_SUCCESS_MESSAGE })
+          await this.getDayDestinationAction(data.trip_date)
+        } else {
+          notify({ type: 'error', text: CREATE_FAILED_MESSAGE })
+        }
+        return result
+      } catch (err) {
+        notify({ type: 'error', text: CREATE_FAILED_MESSAGE })
         throw err
       }
     }

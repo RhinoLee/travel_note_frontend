@@ -1,10 +1,12 @@
 import axios from 'axios'
-import type { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios'
 import useUserStore from '@/stores/user/user'
 import useGlobalStore from '@/stores/global/global'
 import router from '@/router/'
 import { BASE_URL } from './config'
 import { getCookieValue } from '@/utils/getCookieValue'
+
+import type { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios'
+import type { ICustomConfig } from './config/types'
 
 class AxiosRequest {
   instance: AxiosInstance
@@ -37,6 +39,8 @@ class AxiosRequest {
           'X-CSRF-Token': csrfToken
         }
         useGlobalStore().isLoading = true
+        console.log('axios interceptors config', config)
+
         return config
       },
       (error: any) => {
@@ -61,7 +65,9 @@ class AxiosRequest {
     )
   }
 
-  async request(config: AxiosRequestConfig) {
+  async request(config: AxiosRequestConfig, customConfig?: ICustomConfig) {
+    useGlobalStore().isPageLoading = customConfig?.requireLoadingPage || false
+
     try {
       const res = await this.instance.request(config)
 
@@ -75,27 +81,29 @@ class AxiosRequest {
         const axiosError = error as AxiosError
         throw new Error(axiosError.message)
       }
+    } finally {
+      useGlobalStore().isPageLoading = false
     }
   }
 
-  get(config: AxiosRequestConfig) {
-    return this.request({ ...config, method: 'get' })
+  get(config: AxiosRequestConfig, customConfig?: ICustomConfig) {
+    return this.request({ ...config, method: 'get' }, customConfig)
   }
 
-  post(config: AxiosRequestConfig) {
-    return this.request({ ...config, method: 'post' })
+  post(config: AxiosRequestConfig, customConfig?: ICustomConfig) {
+    return this.request({ ...config, method: 'post' }, customConfig)
   }
 
-  delete(config: AxiosRequestConfig) {
-    return this.request({ ...config, method: 'delete' })
+  delete(config: AxiosRequestConfig, customConfig?: ICustomConfig) {
+    return this.request({ ...config, method: 'delete' }, customConfig)
   }
 
-  patch(config: AxiosRequestConfig) {
-    return this.request({ ...config, method: 'patch' })
+  patch(config: AxiosRequestConfig, customConfig?: ICustomConfig) {
+    return this.request({ ...config, method: 'patch' }, customConfig)
   }
 
-  put(config: AxiosRequestConfig) {
-    return this.request({ ...config, method: 'put' })
+  put(config: AxiosRequestConfig, customConfig?: ICustomConfig) {
+    return this.request({ ...config, method: 'put' }, customConfig)
   }
 }
 

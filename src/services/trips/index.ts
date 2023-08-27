@@ -1,13 +1,11 @@
 import $axios from '@/services'
-import useUserStore from '@/stores/user/user'
 import type {
   IListParams,
   IDayTripParams,
   IDayDestinationParmas,
-  IUpdateDayDestinationParams
+  IUpdateDayDestinationParams,
+  CreateAITripDayParams
 } from './type'
-
-const userStore = useUserStore()
 
 export const createTripAPI = (data: FormData | null) => {
   if (!data) return new Error('data is null')
@@ -59,7 +57,19 @@ export const updateTripDayWithDestinationAPI = (data: IUpdateDayDestinationParam
 
 export const deleteDestinationAPI = (destination_id: number) => {
   return $axios.delete({
-    url: `/trip/destination`,
-    data: { destination_id }
+    url: `/trip/destination/${destination_id}`
   })
+}
+
+// openAI createTripDayApi
+export const createAITripDayAPI = (data: CreateAITripDayParams) => {
+  return $axios.post(
+    {
+      url: `/openAI/createTripDay`,
+      data
+    },
+    {
+      requireLoadingPage: true
+    }
+  )
 }
