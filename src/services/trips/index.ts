@@ -55,9 +55,9 @@ export const updateTripDayWithDestinationAPI = (data: IUpdateDayDestinationParam
   })
 }
 
-export const deleteDestinationAPI = (destination_id: number) => {
+export const deleteDestinationAPI = (tripday_destination_id: number) => {
   return $axios.delete({
-    url: `/trip/destination/${destination_id}`
+    url: `/trip/destination/${tripday_destination_id}`
   })
 }
 

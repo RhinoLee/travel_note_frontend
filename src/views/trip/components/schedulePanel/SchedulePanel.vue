@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { useGooglePlacesService } from '@/composables/map/useGooglePlacesService'
 import useMapStore from '@/stores/map/map'
 import useTripsStore from '@/stores/trips/trips'
@@ -15,7 +15,8 @@ const emit = defineEmits([
   'getDayTripDestination',
   'editDayDetination',
   'deleteDayDetination',
-  'clickDestinationHandler'
+  'clickDestinationHandler',
+  'changeCurrentDate'
 ])
 
 const currentSelectDate = ref(props.currentRouteDate)
@@ -76,18 +77,20 @@ async function gptInputHandler() {
   await tripsStore.createAITripDayAction(params)
 }
 
-const isVisable = ref(false)
-function setVisable() {
-  isVisable.value = !isVisable.value
-}
-
-defineExpose({ setVisable })
+watch(
+  () => currentSelectDate.value,
+  (newVal) => {
+    // 清空 input
+    gptInput.value = ''
+    request.query = ''
+    emit('changeCurrentDate', newVal)
+  }
+)
 </script>
 
 <template>
   <div
-    :class="{ 'translate-x-[0]': isVisable, 'translate-x-[-100%]': !isVisable }"
-    class="absolute left-0 top-0 border-r-2 border-[var(--secondary-brand-color-1)] px-[40px] py-[35px] w-[300px] h-full overflow-hidden ease-out duration-300 z-30 bg-white/95 overflow-y-auto lg:w-full lg:px-[40px] lg:relative lg:translate-x-[0%]"
+    class="relative border-r-2 border-[var(--secondary-brand-color-1)] pt-[36px] px-[40px] w-[300px] h-full ease-out duration-300 z-30 lg:w-full lg:relative lg:translate-x-[0%]"
   >
     <!-- gpt input -->
     <label class="block mb-[4px] text-[var(--main-brand-color-1)]" for="gptInput"
@@ -176,7 +179,7 @@ defineExpose({ setVisable })
       </select>
     </div>
     <!-- 目的地排程 -->
-    <div class="mt-[8px]">
+    <div class="mt-[8px] pb-[36px]">
       <!-- destination item -->
       <div
         v-for="item in tripsStore.getDayDestinationsData"
@@ -207,7 +210,7 @@ defineExpose({ setVisable })
               <img class="w-[24px]" src="@/assets/images/icon/edit_icon.svg" />
             </button>
             <!-- delete -->
-            <button @click.stop="deleteDayDetination(item.destination_id)">
+            <button @click.stop="deleteDayDetination(item.id)">
               <img class="w-[24px]" src="@/assets/images/icon/cancel_bold_icon.svg" />
             </button>
           </div>

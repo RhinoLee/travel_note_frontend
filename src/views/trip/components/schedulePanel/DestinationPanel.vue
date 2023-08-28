@@ -29,12 +29,18 @@ function closePanel() {
   mapStore.setClickedPlaceDetail(null)
   tripsStore.setCurrentDestinationId(null)
 }
+
+defineExpose({
+  closePanel
+})
 </script>
 
 <template>
+  <!-- h-[calc(100% - 53px)] -->
+  <!-- lg:h-[780px] -->
   <div
     v-if="getClickedPlaceDetail && isVisibled"
-    class="absolute top-[10px] left-[30px] w-[270px] h-[calc(100% - 53px)] bg-white/80 rounded-lg z-20 overflow-hidden lg:left-[420px] lg:top-[50%] lg:translate-y-[-50%] lg:w-[360px] lg:h-[780px]"
+    class="absolute top-[50%] -translate-y-[calc(50%)] left-[32px] border-2 border-[var(--secondary-brand-color-1)] pb-[40px] w-[290px] bg-white/90 rounded-lg z-20 overflow-hidden lg:left-[420px] lg:w-[360px]"
   >
     <div class="w-full h-full overflow-y-auto">
       <!-- panel header -->
@@ -52,7 +58,7 @@ function closePanel() {
       </header>
       <div class="px-[26px] py-[10px] lg:px-[20px]">
         <!-- place title -->
-        <div class="mb-[10px]">
+        <div class="mb-[10px] py-[10px]">
           <h3 class="text-2xl text-[var(--main-brand-color-1)]">
             {{ getClickedPlaceDetail.name }}
           </h3>
@@ -80,7 +86,7 @@ function closePanel() {
             <span>{{ getClickedPlaceDetail.formatted_phone_number }}</span>
           </div>
           <!-- place open time -->
-          <div v-if="getClickedPlaceDetail.customOpeningHours">
+          <!-- <div v-if="getClickedPlaceDetail.customOpeningHours">
             <h5>營業時間：</h5>
             <div>
               <div v-for="(item, idx) in getClickedPlaceDetail.customOpeningHours" :key="idx">
@@ -89,7 +95,7 @@ function closePanel() {
                 <span>{{ item.open }} ~ {{ item.close }}</span>
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>

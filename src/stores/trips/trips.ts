@@ -152,6 +152,8 @@ const useTripsStore = defineStore({
       return generateDateRange(start_date, end_date)
     },
     getDayDestinationsData(): IDestinationWithDistanceInfo[] {
+      console.log('this.dayDestinationsData', this.dayDestinationsData)
+
       const arr = this.dayDestinationsData.map((data, index) => {
         return {
           ...data,
@@ -381,9 +383,9 @@ const useTripsStore = defineStore({
         throw err
       }
     },
-    async deleteDayDetinationAction(destination_id: number) {
+    async deleteDayDetinationAction(tripday_destination_id: number) {
       try {
-        const result = await deleteDestinationAPI(destination_id)
+        const result = await deleteDestinationAPI(tripday_destination_id)
         if (result.success) {
           notify({ type: 'success', text: DELETE_SUCCESS_MESSAGE })
         } else {
@@ -397,6 +399,7 @@ const useTripsStore = defineStore({
     },
     async createAITripDayAction(data: CreateAITripDayParams) {
       try {
+        // this.getCurrentDayDestination
         const result = await createAITripDayAPI(data)
         if (result.success) {
           notify({ type: 'success', text: CREATE_SUCCESS_MESSAGE })

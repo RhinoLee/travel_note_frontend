@@ -24,6 +24,7 @@ const globalStore = useGlobalStore()
 const isCreateModal = ref(true)
 const editData = ref()
 const buttonText = ref('')
+const startTime = ref({ hours: 0, minutes: 0 })
 
 const initialFormData: IFormModalData = {}
 for (const formItem of props.formFields) {
@@ -240,6 +241,8 @@ defineExpose({
                   v-model="formData[formField.prop]"
                   :id="formField.prop"
                   :teleport="true"
+                  :start-time="startTime"
+                  minutes-increment="5"
                   @closed="validateField(formField.prop, formField.refFields)"
                   @cleared="validateField(formField.prop, formField.refFields)"
                 ></VueDatePicker>

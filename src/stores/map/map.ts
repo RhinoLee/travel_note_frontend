@@ -152,7 +152,11 @@ const useMapStore = defineStore({
         }
         case DESTINATION_MARKERS_TYPE: {
           this.destinationMarkers = []
+          break
         }
+        default:
+          this.searchMarkers = []
+          this.destinationMarkers = []
       }
     },
     displayDirectionPath(data: google.maps.Map | null) {

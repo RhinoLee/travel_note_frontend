@@ -15,9 +15,11 @@
     --green-color-1: #f0f1e9;
     /* date-picker */
     .dp__theme_light {
+      --dp-primary-color: var(--main-brand-color-1);
       --dp-border-radius: 0.375rem;
       --dp-text-color: var(--dark-color-1);
       --dp-border-color: var(--gray-color-1);
+      --dp-action-button-height: 24px;
     }
   }
 }

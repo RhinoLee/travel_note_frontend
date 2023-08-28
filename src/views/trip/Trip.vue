@@ -18,6 +18,7 @@ import type { IDayDestinationRes } from '@/services/trips/type'
 
 const tripsStore = useTripsStore()
 const customFormFields: Ref<IFormField[]> = ref([])
+const destinationPanelRef = ref<InstanceType<typeof DestinationPanel> | null>(null)
 
 interface GooglePlacesService {
   nearbySearchHandler: (request: google.maps.places.TextSearchRequest) => void
@@ -42,10 +43,14 @@ const googlePlacesService = ref<GooglePlacesService | null>(null)
 const currentRouteDate = ref('')
 const router = useRouter()
 const route = useRoute()
+
 const { trip_id, tripDate } = route.params
 currentRouteDate.value = tripDate as string
+
 const { formMadalRef, createClickHandler, editClickHandler } = useFormModal()
 const schedulePanelRef = ref<InstanceType<typeof SchedulePanel> | null>(null)
+
+const isPanelVisable = ref(false)
 
 // call 新增目的地 api
 async function createSubmitHandler(data: any) {
@@ -68,8 +73,8 @@ async function updateSubmitHandler(data: any) {
   }
 }
 // 刪除目的地
-async function deleteDayDetination(destination_id: number) {
-  const result = await tripsStore.deleteDayDetinationAction(destination_id)
+async function deleteDayDetination(tripday_destination_id: number) {
+  const result = await tripsStore.deleteDayDetinationAction(tripday_destination_id)
 
   if (result.success) {
     // 重新取得當前日期的行程
@@ -114,7 +119,13 @@ function clickDestinationHandler({ id, place_id }: { id: number; place_id: strin
   })
 
   // 手機版：關閉 schedule panel
-  schedulePanelRef.value?.setVisable()
+  isPanelVisable.value = false
+}
+
+function changeCurrentDate(date: string) {
+  currentRouteDate.value = date
+  // close destination panel
+  destinationPanelRef.value?.closePanel()
 }
 
 onMounted(async () => {
@@ -177,9 +188,12 @@ watch(
 </script>
 
 <template>
-  <div class="lg:grid lg:grid-cols-[400px_1fr] w-full h-full">
+  <div class="relative lg:grid w-full h-full overflow-hidden lg:grid-cols-[400px_1fr]">
     <!-- panel -->
-    <div class="absolute top-[53px] left-0 h-[calc(100%-53px)] z-10 lg:relative lg:top-0 lg:w-full">
+    <div
+      :class="{ 'translate-x-[0]': isPanelVisable, 'translate-x-[-100%]': !isPanelVisable }"
+      class="absolute top-0 left-0 h-full z-10 bg-white/95 overflow-y-scroll ease-out duration-300 lg:relative lg:top-0 lg:w-full lg:translate-x-[0%]"
+    >
       <SchedulePanel
         ref="schedulePanelRef"
         v-if="mapStore.getMap"
@@ -188,19 +202,23 @@ watch(
         @editDayDetination="(data) => openDestinationFormHandler('edit', data)"
         @deleteDayDetination="deleteDayDetination"
         @clickDestinationHandler="clickDestinationHandler"
+        @changeCurrentDate="changeCurrentDate"
       >
       </SchedulePanel>
-      <DestinationPanel @addDestinationBtnClick="openDestinationFormHandler"></DestinationPanel>
     </div>
+    <DestinationPanel
+      ref="destinationPanelRef"
+      @addDestinationBtnClick="openDestinationFormHandler"
+    ></DestinationPanel>
     <!-- map -->
     <div class="w-full h-full">
       <div class="w-full h-full" ref="mapDom"></div>
     </div>
     <!-- panel trigger -->
-    <div class="absolute left-0 top-[150px] z-40 lg:hidden">
+    <div class="absolute left-0 top-[150px] rotate-90 origin-bottom-left z-40 lg:hidden">
       <button
-        @click="schedulePanelRef?.setVisable()"
-        class="border-y border-r py-[4px] px-[8px] rotate-90 origin-bottom-left text-[var(--gray-color-2)] bg-[var(--secondary-brand-color-1)] tracking-[4px] rounded-t-md"
+        @click="isPanelVisable = !isPanelVisable"
+        class="border-y border-r py-[4px] px-[8px] text-[var(--gray-color-2)] bg-[var(--secondary-brand-color-1)] tracking-[4px] rounded-t-md"
       >
         行程選單
       </button>

@@ -30,8 +30,8 @@ export function formFieldsHandler({ start_date, end_date }: any): IFormField[] {
       type: 'time',
       placeholder: '請選擇開始時間',
       initValue: {
-        hours: new Date().getHours(),
-        minutes: new Date().getMinutes()
+        hours: 0,
+        minutes: 0
       },
       refFields: ['leave_time']
     },
@@ -41,8 +41,8 @@ export function formFieldsHandler({ start_date, end_date }: any): IFormField[] {
       type: 'time',
       placeholder: '請選擇結束時間',
       initValue: {
-        hours: new Date().getHours(),
-        minutes: new Date().getMinutes()
+        hours: 0,
+        minutes: 0
       },
       refFields: ['arrival_time']
     }
