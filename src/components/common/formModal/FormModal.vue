@@ -268,4 +268,3 @@ defineExpose({
 </template>
 
 <style lang="less" scoped></style>
-./config

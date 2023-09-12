@@ -154,9 +154,6 @@ const useMapStore = defineStore({
           this.destinationMarkers = []
           break
         }
-        default:
-          this.searchMarkers = []
-          this.destinationMarkers = []
       }
     },
     displayDirectionPath(data: google.maps.Map | null) {

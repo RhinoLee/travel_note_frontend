@@ -196,6 +196,7 @@ export function useGooglePlacesService(mapInstance: google.maps.Map) {
    */
   const createMarkerByDestination = async (places: IDayDestinationRes[]) => {
     clearMarkers(DESTINATION_MARKERS_TYPE)
+    clearMarkers(SEARCH_MARKERS_TYPE)
 
     // 找出重複的 place_id，有重複代表 user 同一天去同一個地方超過一次
     // 會產生 marker 重疊問題，需要位移
