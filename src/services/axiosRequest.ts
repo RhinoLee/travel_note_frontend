@@ -14,8 +14,8 @@ class AxiosRequest {
 
   constructor(config: any) {
     this.instance = axios.create({
-      baseURL: BASE_URL,
-      timeout: 20000
+      baseURL: BASE_URL
+      // timeout: 20000
     })
     // 可傳入 interceptors
     this.interceptors = config.interceptors
