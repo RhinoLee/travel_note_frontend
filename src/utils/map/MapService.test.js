@@ -20,21 +20,22 @@ global.google = {
     })),
     LatLng: vi.fn().mockImplementation((lat, lng) => ({ lat, lng })),
     DirectionsRenderer: vi.fn().mockImplementation((options) => ({
-      options
+      options,
+      setMap: vi.fn()
     }))
   }
 }
 
 describe('MapService', () => {
   let mapService = null
+  let mapElement = null
   beforeEach(() => {
+    const { document } = new JSDOM(`...`).window
+    mapElement = ref(document.createElement('div'))
     mapService = new MapService()
   })
 
   it('should load the map correctly', async () => {
-    const { document } = new JSDOM(`...`).window
-    const mapElement = ref(document.createElement('div'))
-
     const map = await mapService.loadMap(mapElement)
     expect(map.options.center).toEqual({ lat: 23.97565, lng: 120.9738819 })
     expect(map.options.disableDefaultUI).toBe(true)
@@ -42,10 +43,21 @@ describe('MapService', () => {
     expect(map.options.mapId).toBe(MAP_ID)
   })
 
-  it('should create a DirectionsRenderer with suppressMarkers true', () => {
-    const directionsRenderer = mapService.createDirectionsRenderer()
+  it('should create a DirectionsRenderer correctly', async () => {
+    await mapService.loadMap(mapElement)
+    mapService.createDirectionsRenderer()
+
+    // 確認模擬的 DirectionsRenderer 已被創建
+    expect(vi.mocked(google.maps.DirectionsRenderer)).toHaveBeenCalled()
+
+    // 模擬 DirectionsRenderer 實例
+    const mockDirectionsRendererInstance = vi.mocked(google.maps.DirectionsRenderer).mock.results[0]
+      .value
+
+    // 檢查 setMap 是否被執行
+    expect(mockDirectionsRendererInstance.setMap).toHaveBeenCalled()
 
     // 檢查傳入的選項是否包含 suppressMarkers: true
-    expect(directionsRenderer.options.suppressMarkers).toBe(true)
+    expect(mockDirectionsRendererInstance.options.suppressMarkers).toBe(true)
   })
 })
