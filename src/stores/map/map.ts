@@ -5,9 +5,13 @@ import {
   SEARCH_MARKERS_TYPE,
   ALL_MARKERS_TYPE
 } from '@/composables/map/constants'
+import type { PlacesService } from '@/utils/map/PlacesService'
+import type { MarkerService } from '@/utils/map/MarkerService'
 
 interface IMapState {
   map: google.maps.Map | null
+  placeService: PlacesService | null
+  markerService: MarkerService | null
   directionsRenderer: google.maps.DirectionsRenderer | null
   searchMarkers: google.maps.Marker[]
   destinationMarkers: google.maps.Marker[]
@@ -28,6 +32,8 @@ const useMapStore = defineStore({
   id: 'map',
   state: (): IMapState => ({
     map: null,
+    placeService: null,
+    markerService: null,
     directionsRenderer: null,
     searchMarkers: [],
     destinationMarkers: [],
@@ -74,6 +80,12 @@ const useMapStore = defineStore({
     },
     setDirectionRenderer(renderer: google.maps.DirectionsRenderer) {
       this.directionsRenderer = renderer
+    },
+    setPlaceService(placeService: PlacesService) {
+      this.placeService = placeService
+    },
+    setMarkerService(markerService: MarkerService) {
+      this.markerService = markerService
     },
     stopMarkersAnimate(type: string) {
       switch (type) {

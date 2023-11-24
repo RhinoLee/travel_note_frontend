@@ -4,7 +4,6 @@ import { useRoute, useRouter } from 'vue-router'
 import SchedulePanel from './components/schedulePanel/SchedulePanel.vue'
 import DestinationPanel from './components/schedulePanel/DestinationPanel.vue'
 import { useGoogleMapsLoader } from '@/composables/map/useGoogleMapsLoader'
-import { useGooglePlacesService } from '@/composables/map/useGooglePlacesService'
 import useMapStore from '@/stores/map/map'
 import useTripsStore from '@/stores/trips/trips'
 import FormModal from '@/components/common/formModal/FormModal.vue'
@@ -112,7 +111,7 @@ function clickDestinationHandler({ id, place_id }: { id: number; place_id: strin
     return marker.getTitle() === String(id)
   })
 
-  googlePlacesService.value?.triggerMarkerHandler({
+  mapStore.markerService?.triggerMarkerHandler({
     marker: marker[0],
     place_id,
     destinationId: id
@@ -130,12 +129,6 @@ function changeCurrentDate(date: string) {
 
 onMounted(async () => {
   await useGoogleMapsLoader(mapDom)
-
-  if (mapStore.getMap) {
-    googlePlacesService.value = useGooglePlacesService(mapStore.getMap)
-  } else {
-    // 掛載失敗錯處理
-  }
 
   try {
     await tripsStore.getTripAction(Number(trip_id))
@@ -156,8 +149,8 @@ onMounted(async () => {
 watch(
   () => tripsStore.dayDestinationsData,
   async (newVal) => {
-    await googlePlacesService.value?.createMarkerByDestination(newVal)
-    googlePlacesService.value?.calculateAndDisplayRoute()
+    await mapStore.markerService?.createMarkerByDestination(newVal)
+    mapStore.placeService?.calculateAndDisplayRoute()
   }
 )
 
@@ -174,7 +167,7 @@ watch(
     console.log('clickPlaceId newVal', newVal)
     if (newVal) {
       // call google place detail api
-      googlePlacesService.value?.getPlaceDetails(newVal)
+      mapStore.placeService?.getPlaceDetails(newVal)
     }
   }
 )

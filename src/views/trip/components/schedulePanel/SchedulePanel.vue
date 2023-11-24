@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue'
-import { useGooglePlacesService } from '@/composables/map/useGooglePlacesService'
 import useMapStore from '@/stores/map/map'
 import useTripsStore from '@/stores/trips/trips'
 import { formatDateToUTC } from '@/utils/formatDateTime'
@@ -29,9 +28,8 @@ const request = reactive<google.maps.places.TextSearchRequest>({
 
 function searchPlaceHandler() {
   if (!mapStore.getMap) return
-  const { nearbySearchHandler, taiwanCenter } = useGooglePlacesService(mapStore.getMap)
-  request.location = taiwanCenter
-  nearbySearchHandler(request)
+  request.location = mapStore.placeService?.taiwanCenter
+  mapStore.placeService?.nearbySearchHandler(request)
 }
 
 async function getDayTripDestination(e: Event) {
