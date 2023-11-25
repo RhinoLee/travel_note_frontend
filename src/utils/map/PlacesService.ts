@@ -3,6 +3,7 @@ import type { MapService } from '@/utils/map/MapService'
 import { MarkerService } from '@/utils/map/MarkerService'
 import useMapStore from '@/stores/map/map'
 import useTripsStore from '@/stores/trips/trips'
+import type { IDayDestinationRes } from '@/services/trips/type'
 
 const mapStore = useMapStore()
 const tripsStore = useTripsStore()
@@ -70,6 +71,32 @@ export class PlacesService {
     )
   }
 
+  handleRepeatPlaces(places: IDayDestinationRes[]) {
+    // 找出重複的 place_id，有重複代表 user 同一天去同一個地方超過一次
+    // 會產生 marker 重疊問題，需要位移
+    const placeIdCounts = new Map()
+    places.forEach((place) => {
+      placeIdCounts.set(place.place_id, (placeIdCounts.get(place.place_id) || 0) + 1)
+    })
+
+    const computedPlaces = places.map((place) => {
+      const { place_id, lat, lng } = place
+
+      if (placeIdCounts.get(place_id) > 1) {
+        return this.addRandomOffset(place)
+      }
+
+      return {
+        place_id,
+        position: { lat, lng },
+        isDestination: true,
+        id: place.id
+      }
+    })
+
+    return computedPlaces
+  }
+
   calculateAndDisplayRoute() {
     if (!tripsStore.getDayDestinationsRouteParams) return tripsStore.setDirectionsLeg([])
     const directionsService = new google.maps.DirectionsService()
@@ -96,5 +123,21 @@ export class PlacesService {
         tripsStore.setDirectionsLeg([])
         console.log(err)
       })
+  }
+
+  // 隨機位移經緯度 - 處理相同點位重疊問題
+  addRandomOffset(place: IDayDestinationRes) {
+    const offset = 0.0001
+
+    const { place_id, lat, lng } = place
+    return {
+      place_id,
+      position: {
+        lat: lat + (Math.random() - 0.5) * offset,
+        lng: lng + (Math.random() - 0.5) * offset
+      },
+      isDestination: true,
+      id: place.id
+    }
   }
 }

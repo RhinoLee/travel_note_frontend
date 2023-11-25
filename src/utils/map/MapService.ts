@@ -6,6 +6,7 @@ export class MapService {
   private loader: Loader
   private _mapInstance: google.maps.Map | null = null
   private _directionsRenderer: google.maps.DirectionsRenderer | null = null
+  private mapZoomTimeout: any = null
 
   public get mapInstance(): google.maps.Map | null {
     return this._mapInstance
@@ -56,5 +57,14 @@ export class MapService {
     this.directionsRenderer.setMap(this.mapInstance)
 
     return this.directionsRenderer
+  }
+
+  handleZoomIn(zoomLevel: number) {
+    if (this.mapZoomTimeout) clearTimeout(this.mapZoomTimeout)
+    this.mapZoomTimeout = setTimeout(() => {
+      const currentZoomLevel = this.mapInstance?.getZoom()
+      if (currentZoomLevel !== undefined && currentZoomLevel < zoomLevel)
+        this.mapInstance?.setZoom(zoomLevel)
+    }, 200)
   }
 }
