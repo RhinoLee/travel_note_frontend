@@ -11,7 +11,7 @@ export class MapService {
   public get mapInstance(): google.maps.Map | null {
     return this._mapInstance
   }
-  private set mapInstance(value: google.maps.Map) {
+  private set mapInstance(value: google.maps.Map | null) {
     this._mapInstance = value
   }
 
