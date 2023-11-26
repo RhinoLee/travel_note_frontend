@@ -51,21 +51,17 @@ const useUserStore = defineStore({
       }
     },
     async loginAction(params: ILoginParams): Promise<ILoginRes | undefined> {
-      try {
-        const res: ILoginRes = await loginAPI(params)
+      const res: ILoginRes = await loginAPI(params)
 
-        if (res.success) {
-          // this.setUserName(res.data.name)
-          this.storeUserDataToLocal(res.data as IUserInfo)
+      if (res.success) {
+        // this.setUserName(res.data.name)
+        this.storeUserDataToLocal(res.data as IUserInfo)
 
-          // go to home page
-          router.push({ name: 'home' })
-        }
-
-        return res
-      } catch (error) {
-        console.log(error)
+        // go to home page
+        router.push({ name: 'home' })
       }
+
+      return res
     },
     async getGoogleLoginUrlAction() {
       try {
