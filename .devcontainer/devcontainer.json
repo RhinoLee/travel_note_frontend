@@ -10,14 +10,16 @@
         "terminal.integrated.defaultProfile.linux": "zsh"
       },
       "extensions": [
-        "EditorConfig.EditorConfig",
-        "oderwat.indent-rainbow",
-        "dbaeumer.vscode-eslint",
-        "esbenp.prettier-vscode",
-        "bradlc.vscode-tailwindcss",
-        "Vue.vscode-typescript-vue-plugin",
-        "Vue.volar"
-      ]
+		"EditorConfig.EditorConfig",
+		"oderwat.indent-rainbow",
+		"dbaeumer.vscode-eslint",
+		"esbenp.prettier-vscode",
+		"bradlc.vscode-tailwindcss",
+		"Vue.vscode-typescript-vue-plugin",
+		"Vue.volar",
+		"donjayamanne.githistory",
+		"mhutchie.git-graph"
+	]
     }
   }
 }
