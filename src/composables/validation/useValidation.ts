@@ -1,4 +1,4 @@
-import { ref, watch, reactive } from 'vue'
+import { reactive } from 'vue'
 import { ValidationError, type ObjectSchema } from 'yup'
 
 interface ValidationState {
@@ -29,7 +29,12 @@ export function useValidation<T extends Record<string, any>>(schema: ObjectSchem
         }, {} as Record<string, string>)
         state.errors = errors
         state.isValid = false
+      } else {
+        state.errors = {}
+        state.isValid = true
+        throw err
       }
+
       return false
     }
   }
