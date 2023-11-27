@@ -31,8 +31,7 @@ async function loginHandler() {
 
 <template>
   <div class="flex flex-col items-center gap-[20px] w-full">
-    <!-- form-item -->
-    <div class="w-full">
+    <div class="form-item email-field w-full">
       <label class="block">
         <span class="block text-base text-[var(--main-brand-color-1)] tracking-wider">信箱</span>
         <input
@@ -42,10 +41,12 @@ async function loginHandler() {
           class="block border-[var(--gray-color-1)] mt-1 px-3 py-2 w-full h-[56px] rounded-md focus:border-[var(--main-brand-color-1)] focus:ring-[var(--main-brand-color-1)]"
         />
       </label>
-      <span v-if="state.errors?.email" class="text-red-500">{{ state.errors.email }}</span>
+      <span v-if="state.errors?.email" class="error-message text-red-500">{{
+        state.errors.email
+      }}</span>
     </div>
-    <!-- form-item -->
-    <div class="w-full">
+
+    <div class="form-item password-field w-full">
       <label class="block">
         <span class="block text-base text-[var(--main-brand-color-1)] tracking-wider">密碼</span>
         <input
@@ -55,7 +56,9 @@ async function loginHandler() {
           class="block border-[var(--gray-color-1)] mt-1 px-3 py-2 w-full h-[56px] rounded-md focus:border-[var(--main-brand-color-1)] focus:ring-[var(--main-brand-color-1)]"
         />
       </label>
-      <span v-if="state.errors?.password" class="text-red-500">{{ state.errors.password }}</span>
+      <span v-if="state.errors?.password" class="error-message text-red-500">{{
+        state.errors.password
+      }}</span>
     </div>
     <!-- button -->
     <div class="flex items-center justify-center w-full">
