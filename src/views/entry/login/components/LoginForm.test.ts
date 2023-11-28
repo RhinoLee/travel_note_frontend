@@ -1,6 +1,6 @@
 import { vi, describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import LoginForm from '@/views/entry/login/components/LoginForm.vue' // 替換為正確的組件路徑
+import LoginForm from '@/views/entry/login/components/LoginForm.vue'
 
 // 模擬外部依賴
 vi.mock('@/stores/user/user')

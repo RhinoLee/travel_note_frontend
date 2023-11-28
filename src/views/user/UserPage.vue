@@ -21,11 +21,10 @@ const { formMadalRef, editClickHandler } = useFormModal()
 
 async function updateSubmitHandler(data: any) {
   const params: IUpdateUserParams = { name: data.name, avatar: null }
-
   if (typeof data.avatar[0] === 'string') {
     params.avatar = data.avatar[0]
   } else if (typeof data.avatar[0] === 'object') {
-    params.avatar = data.avatar[0].file
+    params.avatar = data.avatar[0]?.value.file
   }
 
   const result = await userStore.updateUserInfoAction(params)

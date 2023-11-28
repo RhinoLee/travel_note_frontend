@@ -79,7 +79,8 @@ const useTripsStore = defineStore({
           if (key === 'tripImage') {
             const item = this.createData[key]
             if (Array.isArray(item)) {
-              const file = item[0]?.file
+              console.log('item[0]?.value.file', item[0]?.value.file)
+              const file = item[0]?.value.file
               formatData[key] = file || null
             }
           } else if (key === 'start_date' || key === 'end_date') {

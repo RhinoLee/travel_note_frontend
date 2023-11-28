@@ -11,6 +11,7 @@ interface IFileUpload {
     oldFile: VueUploadItem | undefined,
     prevent: (prevent?: boolean) => boolean
   ) => void
+  clearPreviewFile: () => void
   upload: Ref<InstanceType<typeof VueUploadComponent> | null>
 }
 
@@ -19,8 +20,6 @@ export function useFileUpload(): IFileUpload {
   const previewFile = ref<any>(null)
 
   function inputFile(newFile: VueUploadItem | undefined, oldFile: VueUploadItem | undefined) {
-    console.log('newFile', newFile)
-    console.log('oldFile', oldFile)
     previewFile.value = newFile
   }
 
@@ -47,5 +46,9 @@ export function useFileUpload(): IFileUpload {
     }
   }
 
-  return { previewFile, inputFile, inputFilter, upload }
+  function clearPreviewFile() {
+    previewFile.value = null
+  }
+
+  return { previewFile, inputFile, inputFilter, clearPreviewFile, upload }
 }

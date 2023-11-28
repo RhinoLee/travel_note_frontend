@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { toRaw, reactive, ref, watch, computed } from 'vue'
-import VueDatePicker from '@vuepic/vue-datepicker'
-import '@vuepic/vue-datepicker/dist/main.css'
-import { useFileUpload } from '@/composables/fileUpload/useFileUpload'
 import { useFormValidation } from '@/composables/validation/useFormValidation'
-import DefaultAvatar from '@/assets/images/icon/default_avatar_icon.svg'
 import useGlobalStore from '@/stores/global/global'
+import TextInput from '../FormItem/TextInput.vue'
+import PureText from '../FormItem/PureText.vue'
+import DateInput from '../FormItem/DateInput.vue'
+import TimeInput from '../FormItem/TimeInput.vue'
+import AvatarInput from '../FormItem/AvatarInput.vue'
+import SingleFileInput from '../FormItem/SingleFileInput.vue'
 import type { IModalProps, IFormModalData } from './config/types'
 
 // 這個組件會透過上層 formFields 配置文件，來產生對應的表單欄位
@@ -24,7 +26,6 @@ const globalStore = useGlobalStore()
 const isCreateModal = ref(true)
 const editData = ref()
 const buttonText = ref('')
-const startTime = ref({ hours: 0, minutes: 0 })
 
 const initialFormData: IFormModalData = {}
 for (const formItem of props.formFields) {
@@ -83,11 +84,8 @@ function setModalVisible(isCreate: boolean = true, itemData: any = {}) {
   if (!isModalVisible.value) clearErrors()
 }
 
-// file upload
-const { previewFile, inputFile, inputFilter, upload } = useFileUpload()
-
 function clearFile(prop: string) {
-  formData[prop] = ['']
+  formData[prop] = []
 }
 
 // modal submit
@@ -110,6 +108,15 @@ const formModalTitle = computed(() => {
   const prefix = isCreateModal.value ? '新增' : '編輯'
   return prefix + props.modalTitle
 })
+
+const resolveComponent = (type: string) => {
+  if (type === 'text') return TextInput
+  if (type === 'pureText') return PureText
+  if (type === 'date') return DateInput
+  if (type === 'time') return TimeInput
+  if (type === 'avatar') return AvatarInput
+  if (type === 'singleFile') return SingleFileInput
+}
 
 defineExpose({
   setModalVisible
@@ -136,119 +143,18 @@ defineExpose({
         <!-- 表單主要內容 -->
         <div class="mx-auto px-[20px] py-[15px] min-h-[100px] space-y-[20px]">
           <div v-for="formField in formFields" :key="formField.prop">
-            <template v-if="formField.type === 'singleFile'">
-              <!-- 預覽圖片區域 -->
-              <div v-if="previewFile && previewFile.blob">
-                <img
-                  :src="previewFile.blob"
-                  class="w-full max-h-[200px] object-cover object-center"
-                />
-              </div>
-              <label class="form-modal-label" :for="formField.prop">{{ formField.title }}</label>
-              <file-upload
-                ref="upload"
-                v-model="formData[formField.prop]"
-                @input-file="inputFile"
-                @input-filter="inputFilter"
-              >
-                <button
-                  class="ml-auto px-[20px] py-[6px] bg-[var(--main-brand-color-1)] text-white text-xs md:text-sm rounded-lg"
-                >
-                  上傳圖片
-                </button>
-              </file-upload>
-            </template>
-            <template v-if="formField.type === 'avatar'">
-              <!-- 預覽圖片區域 -->
-              <div
-                v-if="(previewFile && previewFile.blob) || formData[formField.prop]"
-                class="relative mb-[16px]"
-              >
-                <img
-                  v-default-image="DefaultAvatar"
-                  :src="previewFile?.blob || formData[formField.prop][0] || DefaultAvatar"
-                  class="w-[108px] h-[108px] rounded-full object-cover object-center overflow-hidden"
-                  alt=""
-                />
-                <!-- delete icon -->
-                <div
-                  @click="clearFile(formField.prop)"
-                  class="absolute bottom-[4px] left-[78px] flex items-center justify-center w-[32px] h-[32px] bg-[var(--green-color-1)] rounded-full overflow-hidden cursor-pointer"
-                >
-                  <img src="@/assets/images/icon/delete_icon.svg" />
-                </div>
-              </div>
-              <label class="form-modal-label" :for="formField.prop">{{ formField.title }}</label>
-              <file-upload
-                ref="upload"
-                v-model="formData[formField.prop]"
-                @input-file="inputFile"
-                @input-filter="inputFilter"
-              >
-                <button
-                  class="ml-auto px-[20px] py-[6px] bg-[var(--main-brand-color-1)] text-white text-xs md:text-sm rounded-lg"
-                >
-                  上傳圖片
-                </button>
-              </file-upload>
-            </template>
-            <!-- 純文字，無輸入匡 -->
-            <template v-if="formField.type === 'pureText'">
-              <div>
-                <label class="form-modal-label" :for="formField.prop">{{ formField.title }}</label>
-                <div
-                  class="block border-[var(--gray-color-1)] mt-1 py-2 w-full h-[36px] rounded-md"
-                >
-                  {{ formData[formField.prop] }}
-                </div>
-              </div>
-            </template>
-            <template v-if="formField.type === 'text'">
-              <div>
-                <label class="form-modal-label" :for="formField.prop">{{ formField.title }}</label>
-                <input
-                  type="text"
-                  v-model.trim="formData[formField.prop]"
-                  @input="validateField(formField.prop)"
-                  @blur="validateField(formField.prop)"
-                  class="block border-[var(--gray-color-1)] mt-1 px-3 py-2 w-full h-[36px] rounded-md"
-                />
-                <p class="text-red-500">{{ errors[formField.prop] }}</p>
-              </div>
-            </template>
-            <template v-if="formField.type === 'date'">
-              <div>
-                <label class="form-modal-label" :for="formField.prop">{{ formField.title }}</label>
-                <VueDatePicker
-                  v-model="formData[formField.prop]"
-                  :id="formField.prop"
-                  :year-range="formField.yearsRange || undefined"
-                  :min-date="formField.minDate || undefined"
-                  :max-date="formField.maxDate || undefined"
-                  :enable-time-picker="formField.enableTimePicker"
-                  :teleport="true"
-                  @closed="validateField(formField.prop, formField.refFields)"
-                  @cleared="validateField(formField.prop, formField.refFields)"
-                ></VueDatePicker>
-                <p class="text-red-500">{{ errors[formField.prop] }}</p>
-              </div>
-            </template>
-            <template v-if="formField.type === 'time'">
-              <div>
-                <label class="form-modal-label" :for="formField.prop">{{ formField.title }}</label>
-                <VueDatePicker
-                  time-picker
-                  v-model="formData[formField.prop]"
-                  :id="formField.prop"
-                  :teleport="true"
-                  :start-time="startTime"
-                  minutes-increment="5"
-                  @closed="validateField(formField.prop, formField.refFields)"
-                  @cleared="validateField(formField.prop, formField.refFields)"
-                ></VueDatePicker>
-                <p class="text-red-500">{{ errors[formField.prop] }}</p>
-              </div>
-            </template>
+            <component
+              :is="resolveComponent(formField.type)"
+              v-model="formData[formField.prop]"
+              v-bind="formField"
+              :label="formField.title"
+              :fieldId="formField.prop"
+              :error="errors[formField.prop]"
+              @blur="validateField(formField.prop)"
+              @onClosed="validateField(formField.prop, formField.refFields)"
+              @onCleared="validateField(formField.prop, formField.refFields)"
+              @onClearFile="clearFile(formField.prop)"
+            />
           </div>
         </div>
         <footer

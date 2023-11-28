@@ -14,6 +14,7 @@ async function createSubmitHandler(data: any) {
   // 整理 data 成 API 所需格式
   const tripsStore = useTripsStore()
   tripsStore.setCreateData(data)
+
   try {
     const result = await tripsStore.createTrip()
     tripsStore.setCreateData(null)

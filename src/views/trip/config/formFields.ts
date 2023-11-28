@@ -21,7 +21,7 @@ export function formFieldsHandler({ start_date, end_date }: any): IFormField[] {
       minDate: dayjs(start_date).format(),
       maxDate: dayjs(end_date).format(),
       enableTimePicker: false,
-      initValue: dayjs(start_date),
+      initValue: dayjs(start_date).toDate(),
       refFields: []
     },
     {
