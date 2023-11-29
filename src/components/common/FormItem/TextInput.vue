@@ -3,11 +3,10 @@ export interface Props {
   modelValue: string
   label: string
   fieldId: string
-  error: string
+  error: string | undefined
 }
 
 defineProps<Props>()
-
 const emit = defineEmits(['update:modelValue', 'blur'])
 
 const onBlur = () => {

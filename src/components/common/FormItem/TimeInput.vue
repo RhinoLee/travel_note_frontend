@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import VueDatePicker from '@vuepic/vue-datepicker'
+import VueDatePicker, { type TimeModel } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 
 export interface Props {
-  modelValue: Date | string | null
+  modelValue: TimeModel | null
   label: string
   fieldId: string
   error: string | undefined
-  startTime: Object
+  startTime?: Object
 }
 
 defineProps<Props>()
@@ -31,7 +31,7 @@ const handleUpdate = (modelData: string) => {
     @closed="$emit('onClosed')"
     @cleared="$emit('onCleared')"
   ></VueDatePicker>
-  <p class="text-red-500">{{ error }}</p>
+  <p v-if="error" class="text-red-500">{{ error }}</p>
 </template>
 
 <style lang="less" scoped></style>

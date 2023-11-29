@@ -25,7 +25,7 @@ export const formFields = [
     type: 'date',
     placeholder: '請選擇開始日期',
     enableTimePicker: false,
-    initValue: dayjs(),
+    initValue: dayjs().toDate(),
     refFields: ['end_date']
   },
   {
@@ -34,7 +34,7 @@ export const formFields = [
     type: 'date',
     placeholder: '請選擇結束日期',
     enableTimePicker: false,
-    initValue: dayjs(),
+    initValue: dayjs().toDate(),
     refFields: ['start_date']
   }
 ]

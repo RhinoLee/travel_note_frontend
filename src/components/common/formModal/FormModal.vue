@@ -2,12 +2,8 @@
 import { toRaw, reactive, ref, watch, computed } from 'vue'
 import { useFormValidation } from '@/composables/validation/useFormValidation'
 import useGlobalStore from '@/stores/global/global'
-import TextInput from '../FormItem/TextInput.vue'
-import PureText from '../FormItem/PureText.vue'
-import DateInput from '../FormItem/DateInput.vue'
-import TimeInput from '../FormItem/TimeInput.vue'
-import AvatarInput from '../FormItem/AvatarInput.vue'
-import SingleFileInput from '../FormItem/SingleFileInput.vue'
+import { resolveProps } from '@/components/common/formModal/config/resolveProps'
+import { resolveComponent } from '@/components/common/formModal/config/resolveComponent'
 import type { IModalProps, IFormModalData } from './config/types'
 
 // 這個組件會透過上層 formFields 配置文件，來產生對應的表單欄位
@@ -109,13 +105,26 @@ const formModalTitle = computed(() => {
   return prefix + props.modalTitle
 })
 
-const resolveComponent = (type: string) => {
-  if (type === 'text') return TextInput
-  if (type === 'pureText') return PureText
-  if (type === 'date') return DateInput
-  if (type === 'time') return TimeInput
-  if (type === 'avatar') return AvatarInput
-  if (type === 'singleFile') return SingleFileInput
+// 根據不同 formItem component 設定專屬 emits
+function resolveEmits(formField: any): any {
+  switch (formField.type) {
+    case 'text':
+      return {
+        blur: () => validateField(formField.prop)
+      }
+    case 'date':
+      return {
+        onClosed: () => validateField(formField.prop, formField.refFields),
+        onCleared: () => validateField(formField.prop, formField.refFields)
+      }
+    case 'avatar':
+    case 'singleFile':
+      return {
+        onClearFile: () => clearFile(formField.prop)
+      }
+    default:
+      return {}
+  }
 }
 
 defineExpose({
@@ -146,14 +155,8 @@ defineExpose({
             <component
               :is="resolveComponent(formField.type)"
               v-model="formData[formField.prop]"
-              v-bind="formField"
-              :label="formField.title"
-              :fieldId="formField.prop"
-              :error="errors[formField.prop]"
-              @blur="validateField(formField.prop)"
-              @onClosed="validateField(formField.prop, formField.refFields)"
-              @onCleared="validateField(formField.prop, formField.refFields)"
-              @onClearFile="clearFile(formField.prop)"
+              v-bind="resolveProps(formField, errors)"
+              v-on="resolveEmits(formField)"
             />
           </div>
         </div>
@@ -172,5 +175,3 @@ defineExpose({
     </div>
   </div>
 </template>
-
-<style lang="less" scoped></style>

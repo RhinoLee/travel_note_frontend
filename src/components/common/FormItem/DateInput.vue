@@ -7,9 +7,9 @@ export interface Props {
   label: string
   fieldId: string
   error: string | undefined
-  yearsRange: number[]
-  minDate: string
-  maxDate: string
+  yearsRange?: number[]
+  minDate?: string
+  maxDate?: string
   enableTimePicker?: boolean
 }
 
@@ -36,5 +36,5 @@ const handleUpdate = (modelData: string) => {
     @closed="$emit('onClosed')"
     @cleared="$emit('onCleared')"
   ></VueDatePicker>
-  <p class="text-red-500">{{ error }}</p>
+  <p v-if="error" class="text-red-500">{{ error }}</p>
 </template>

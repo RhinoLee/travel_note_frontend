@@ -2,7 +2,7 @@ import { reactive } from 'vue'
 import { ObjectSchema, ValidationError } from 'yup'
 import type { AnyObject } from 'yup'
 
-interface IErrors {
+export interface IErrors {
   [propName: string]: string
 }
 
