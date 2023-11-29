@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
 import useUserStore from '@/stores/user/user'
-import { loginSchema } from '@/composables/validation/schema/rules'
+import { loginSchema } from '@/composables/validation/schema/loginSchema'
 import { useValidation } from '@/composables/validation/useValidation'
 import type { ILoginParams } from '@/services/user/type'
 import { notify } from '@kyvg/vue3-notification'

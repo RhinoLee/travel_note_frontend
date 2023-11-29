@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { toRaw, reactive, ref, watch, computed } from 'vue'
-import { useFormValidation } from '@/composables/validation/useFormValidation'
+import { useValidation } from '@/composables/validation/useValidation'
 import useGlobalStore from '@/stores/global/global'
 import { resolveProps } from '@/components/common/formModal/config/resolveProps'
 import { resolveComponent } from '@/components/common/formModal/config/resolveComponent'
@@ -14,9 +14,7 @@ const emit = defineEmits<{
   createSubmit: [data: IFormModalData]
 }>()
 
-const props = withDefaults(defineProps<IModalProps>(), {
-  modalBanner: ''
-})
+const props = withDefaults(defineProps<IModalProps>(), {})
 
 const globalStore = useGlobalStore()
 const isCreateModal = ref(true)
@@ -24,6 +22,7 @@ const editData = ref()
 const buttonText = ref('')
 
 const initialFormData: IFormModalData = {}
+// 設定初始值（可參考 src/views/home/config/formFields.ts）
 for (const formItem of props.formFields) {
   initialFormData[formItem.prop] = formItem.initValue ?? ''
 }
@@ -42,7 +41,7 @@ watch(
 )
 
 // 驗證規則
-const { errors, validate, validateField, clearErrors } = useFormValidation(props.schema, formData)
+const { state, validate, resetValidator } = useValidation(props.schema)
 
 const isModalVisible = ref(false)
 
@@ -77,7 +76,7 @@ function setModalVisible(isCreate: boolean = true, itemData: any = {}) {
     }
   }
 
-  if (!isModalVisible.value) clearErrors()
+  if (!isModalVisible.value) resetValidator()
 }
 
 function clearFile(prop: string) {
@@ -86,16 +85,14 @@ function clearFile(prop: string) {
 
 // modal submit
 async function submitHandler() {
-  try {
-    await validate()
-    // 編輯模式
-    if (!isCreateModal.value && editData.value) {
-      emit('updateSubmit', toRaw(formData))
-    } else {
-      emit('createSubmit', toRaw(formData))
-    }
-  } catch (err) {
-    console.log('submitHandler err', err)
+  const isValid = await validate(toRaw(formData))
+
+  if (!isValid) return
+  // 編輯模式
+  if (!isCreateModal.value && editData.value) {
+    emit('updateSubmit', toRaw(formData))
+  } else {
+    emit('createSubmit', toRaw(formData))
   }
 }
 
@@ -110,12 +107,13 @@ function resolveEmits(formField: any): any {
   switch (formField.type) {
     case 'text':
       return {
-        blur: () => validateField(formField.prop)
+        blur: () => validate(toRaw(formData))
       }
     case 'date':
+    case 'time':
       return {
-        onClosed: () => validateField(formField.prop, formField.refFields),
-        onCleared: () => validateField(formField.prop, formField.refFields)
+        onClosed: () => validate(toRaw(formData)),
+        onCleared: () => validate(toRaw(formData))
       }
     case 'avatar':
     case 'singleFile':
@@ -155,7 +153,7 @@ defineExpose({
             <component
               :is="resolveComponent(formField.type)"
               v-model="formData[formField.prop]"
-              v-bind="resolveProps(formField, errors)"
+              v-bind="resolveProps(formField, state.errors)"
               v-on="resolveEmits(formField)"
             />
           </div>

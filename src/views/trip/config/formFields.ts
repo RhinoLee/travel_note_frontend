@@ -55,27 +55,3 @@ const timeIsAfter = (arrival_time: any, leave_time: any) => {
     return true
   return false
 }
-
-export const schema = object().shape({
-  name: string().required('請輸入名稱'),
-  arrival_time: object()
-    .shape({
-      hours: number().min(0).max(23),
-      minutes: number().min(0).max(59)
-    })
-    .test('is-after-arrival', '到達時間需要比離開時間小', function (value) {
-      const { leave_time } = this.parent
-      return timeIsAfter(value, leave_time)
-    })
-    .required('請選擇時間'),
-  leave_time: object({
-    hours: number().min(0).max(23),
-    minutes: number().min(0).max(59)
-  })
-    .test('is-after-arrival', '離開時間需要比到達時間大', function (value) {
-      const { arrival_time } = this.parent
-      return timeIsAfter(arrival_time, value)
-    })
-    .required('請選擇時間'),
-  trip_date: date().required('請選擇日期')
-})

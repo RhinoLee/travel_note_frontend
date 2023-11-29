@@ -32,12 +32,18 @@ export function useValidation<T extends Record<string, any>>(schema: ObjectSchem
       } else {
         state.errors = {}
         state.isValid = true
-        throw err
+
+        console.log('yup schema validate error: ', err)
       }
 
       return false
     }
   }
 
-  return { validate, state }
+  const resetValidator = () => {
+    state.errors = {}
+    state.isValid = true
+  }
+
+  return { validate, state, resetValidator }
 }

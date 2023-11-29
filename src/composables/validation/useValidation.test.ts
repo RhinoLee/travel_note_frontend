@@ -31,7 +31,6 @@ describe('useValidation', () => {
     })
 
     const { validate, state } = useValidation(testSchema)
-    await expect(validate({ name: 'Test' })).rejects.toThrow('Unexpected Error')
 
     // 檢查 state.errors 和 state.isValid 的狀態，確保它們沒有被更新
     expect(state.errors).toEqual({})

@@ -4,7 +4,8 @@ import useUserStore from '@/stores/user/user'
 import DefaultAvatar from '@/assets/images/icon/default_avatar_icon.svg'
 import FormModal from '@/components/common/formModal/FormModal.vue'
 import useFormModal from '@/composables/modal/useFormModal'
-import { schema, formFields } from './config/formFields'
+import { formFields } from './config/formFields'
+import { userSchema } from '@/composables/validation/schema/userSchema'
 
 import type { IUpdateUserParams } from '@/services/user/type'
 
@@ -101,7 +102,7 @@ onMounted(async () => {
       ref="formMadalRef"
       modalTitle="個人資訊"
       :formFields="formFields"
-      :schema="schema"
+      :schema="userSchema"
       @updateSubmit="updateSubmitHandler"
     >
     </FormModal>

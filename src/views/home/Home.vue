@@ -3,10 +3,11 @@ import { ref } from 'vue'
 import TripList from './components/TripList.vue'
 import FormModal from '@/components/common/formModal/FormModal.vue'
 import useFormModal from '@/composables/modal/useFormModal'
-import { formFields, schema } from './config/formFields'
+import { formFields } from './config/formFields'
 import useTripsStore from '@/stores/trips/trips'
 import { notify } from '@kyvg/vue3-notification'
 import { CREATE_SUCCESS_MESSAGE, CREATE_FAILED_MESSAGE } from '@/common/constants'
+import { tripSchema } from '@/composables/validation/schema/tripSchema'
 
 const tripListRef = ref<InstanceType<typeof TripList> | null>(null)
 
@@ -59,7 +60,7 @@ const { formMadalRef, createClickHandler } = useFormModal()
       ref="formMadalRef"
       modalTitle="旅程"
       :formFields="formFields"
-      :schema="schema"
+      :schema="tripSchema"
       @createSubmit="createSubmitHandler"
       @updateSubmit="updateSubmitHandler"
     >
