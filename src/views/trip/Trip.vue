@@ -8,7 +8,8 @@ import useMapStore from '@/stores/map/map'
 import useTripsStore from '@/stores/trips/trips'
 import FormModal from '@/components/common/formModal/FormModal.vue'
 import useFormModal from '@/composables/modal/useFormModal'
-import { schema, formFieldsHandler } from './config/formFields'
+import { formFieldsHandler } from './config/formFields'
+import { tripDaySchema } from '@/composables/validation/schema/tripDaySchema'
 import { formatDateToUTC } from '@/utils/formatDateTime'
 
 import type { Ref } from 'vue'
@@ -222,7 +223,7 @@ watch(
     ref="formMadalRef"
     modalTitle="目的地"
     :formFields="customFormFields"
-    :schema="schema"
+    :schema="tripDaySchema"
     @createSubmit="createSubmitHandler"
     @updateSubmit="updateSubmitHandler"
   >

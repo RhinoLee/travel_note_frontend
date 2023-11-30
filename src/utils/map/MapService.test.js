@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { MapService } from '@/utils/map/MapService'
 import { ref } from 'vue'
-import { JSDOM } from 'jsdom'
 import { DEFAULT_ZOOM_LEVEL, MAP_ID } from '@/composables/map/constants'
 
 // 模擬 @googlemaps/js-api-loader 中的 Loader 行為
@@ -30,7 +29,6 @@ describe('MapService', () => {
   let mapService = null
   let mapElement = null
   beforeEach(() => {
-    const { document } = new JSDOM(`...`).window
     mapElement = ref(document.createElement('div'))
     mapService = new MapService()
   })

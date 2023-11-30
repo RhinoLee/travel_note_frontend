@@ -1,5 +1,3 @@
-import { object, string } from 'yup'
-
 export const formFields = [
   {
     prop: 'avatar',
@@ -18,7 +16,3 @@ export const formFields = [
     refFields: []
   }
 ]
-
-export const schema = object().shape({
-  name: string().required('請輸入名稱')
-})

@@ -15,7 +15,6 @@ export interface IFormField {
 
 export interface IModalProps {
   modalTitle: string
-  modalBanner?: string
   formFields: IFormField[]
   schema: ObjectSchema<any>
 }

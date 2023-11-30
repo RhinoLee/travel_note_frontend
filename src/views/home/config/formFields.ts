@@ -1,6 +1,4 @@
-import { object, string, ref, date } from 'yup'
 import dayjs from 'dayjs'
-import { formatDateToUTC } from '@/utils/formatDateTime'
 
 export const formFields = [
   {
@@ -25,7 +23,7 @@ export const formFields = [
     type: 'date',
     placeholder: '請選擇開始日期',
     enableTimePicker: false,
-    initValue: dayjs(),
+    initValue: dayjs().toDate(),
     refFields: ['end_date']
   },
   {
@@ -34,23 +32,7 @@ export const formFields = [
     type: 'date',
     placeholder: '請選擇結束日期',
     enableTimePicker: false,
-    initValue: dayjs(),
+    initValue: dayjs().toDate(),
     refFields: ['start_date']
   }
 ]
-
-export const schema = object().shape({
-  title: string().required('請輸入名稱'),
-  start_date: date()
-    .required('請選擇日期')
-    .test('start_date', '開始時間需小於或等於結束時間', function (value) {
-      const endDate: Date = this.resolve(ref('end_date'))
-      return !value || !endDate || formatDateToUTC(value) <= formatDateToUTC(endDate)
-    }),
-  end_date: date()
-    .required('請選擇日期')
-    .test('end_date', '結束時間需大於或等於開始時間', function (value) {
-      const startDate: Date = this.resolve(ref('start_date'))
-      return !value || !startDate || formatDateToUTC(value) >= formatDateToUTC(startDate)
-    })
-})

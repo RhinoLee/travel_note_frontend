@@ -1,7 +1,7 @@
 import './assets/main.css'
 
 import { createApp } from 'vue'
-import registerPinia from './stores'
+import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
@@ -11,9 +11,10 @@ import VueUploadComponent from 'vue-upload-component/src/FileUpload.vue'
 import registerGlobalDirective from './directives'
 
 const app = createApp(App)
+const pinia = createPinia()
 
+app.use(pinia)
 app.use(router)
-app.use(registerPinia)
 app.use(Notifications)
 app.component('file-upload', VueUploadComponent)
 registerGlobalDirective(app)

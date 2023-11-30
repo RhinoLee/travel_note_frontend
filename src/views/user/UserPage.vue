@@ -4,7 +4,8 @@ import useUserStore from '@/stores/user/user'
 import DefaultAvatar from '@/assets/images/icon/default_avatar_icon.svg'
 import FormModal from '@/components/common/formModal/FormModal.vue'
 import useFormModal from '@/composables/modal/useFormModal'
-import { schema, formFields } from './config/formFields'
+import { formFields } from './config/formFields'
+import { userSchema } from '@/composables/validation/schema/userSchema'
 
 import type { IUpdateUserParams } from '@/services/user/type'
 
@@ -21,11 +22,10 @@ const { formMadalRef, editClickHandler } = useFormModal()
 
 async function updateSubmitHandler(data: any) {
   const params: IUpdateUserParams = { name: data.name, avatar: null }
-
   if (typeof data.avatar[0] === 'string') {
     params.avatar = data.avatar[0]
   } else if (typeof data.avatar[0] === 'object') {
-    params.avatar = data.avatar[0].file
+    params.avatar = data.avatar[0]?.value.file
   }
 
   const result = await userStore.updateUserInfoAction(params)
@@ -102,7 +102,7 @@ onMounted(async () => {
       ref="formMadalRef"
       modalTitle="個人資訊"
       :formFields="formFields"
-      :schema="schema"
+      :schema="userSchema"
       @updateSubmit="updateSubmitHandler"
     >
     </FormModal>
