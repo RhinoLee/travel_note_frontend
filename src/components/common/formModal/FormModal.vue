@@ -17,6 +17,7 @@ const emit = defineEmits<{
 const props = withDefaults(defineProps<IModalProps>(), {})
 
 const globalStore = useGlobalStore()
+
 const isCreateModal = ref(true)
 const editData = ref()
 const buttonText = ref('')
@@ -66,7 +67,7 @@ function setModalVisible(isCreate: boolean = true, itemData: any = {}) {
         formData[key] = itemData[key]
       }
     }
-    console.log(itemData)
+
     editData.value = itemData
   } else {
     // 新增模式
@@ -163,6 +164,7 @@ defineExpose({
         >
           <button
             @click="submitHandler"
+            id="submit-btn"
             class="ml-auto px-[20px] py-[6px] bg-[var(--main-brand-color-1)] text-white text-xs md:text-sm rounded-lg"
             :disabled="globalStore.isLoading"
           >
