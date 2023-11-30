@@ -1,6 +1,4 @@
-import { object, string, ref, date } from 'yup'
 import dayjs from 'dayjs'
-import { formatDateToUTC } from '@/utils/formatDateTime'
 
 export const formFields = [
   {

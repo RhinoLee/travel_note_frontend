@@ -11,10 +11,10 @@ export const tripDaySchema = object().shape({
   name: string().required('目的地名稱為必填項'),
   arrival_time: object()
     .shape({
-      hours: number().min(0).max(23).nullable(true),
-      minutes: number().min(0).max(59).nullable(true)
+      hours: number().min(0).max(23).nullable(),
+      minutes: number().min(0).max(59).nullable()
     })
-    .nullable(true)
+    .nullable()
     .required('請選擇時間')
     .test('is-after-arrival', '到達時間需要比離開時間小', function (value) {
       const { leave_time } = this.parent
@@ -22,10 +22,10 @@ export const tripDaySchema = object().shape({
       return timeIsAfter(value, leave_time)
     }),
   leave_time: object({
-    hours: number().min(0).max(23).nullable(true),
-    minutes: number().min(0).max(59).nullable(true)
+    hours: number().min(0).max(23).nullable(),
+    minutes: number().min(0).max(59).nullable()
   })
-    .nullable(true)
+    .nullable()
     .required('請選擇時間')
     .test('is-after-arrival', '離開時間需要比到達時間大', function (value) {
       const { arrival_time } = this.parent

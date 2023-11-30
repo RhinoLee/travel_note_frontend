@@ -1,5 +1,3 @@
-import { object, string } from 'yup'
-
 export const formFields = [
   {
     prop: 'avatar',

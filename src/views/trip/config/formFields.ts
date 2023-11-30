@@ -1,4 +1,3 @@
-import { object, string, date, number } from 'yup'
 import dayjs from 'dayjs'
 import type { IFormField } from '@/components/common/formModal/config/types'
 
@@ -47,11 +46,4 @@ export function formFieldsHandler({ start_date, end_date }: any): IFormField[] {
       refFields: ['arrival_time']
     }
   ]
-}
-
-const timeIsAfter = (arrival_time: any, leave_time: any) => {
-  if (arrival_time.hours < leave_time.hours) return true
-  if (arrival_time.hours === leave_time.hours && arrival_time.minutes < leave_time.minutes)
-    return true
-  return false
 }
