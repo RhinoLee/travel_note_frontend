@@ -1,46 +1,27 @@
 # travel_note_frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+### 主要功能
 
-## Recommended IDE Setup
+- google 第三方登入、上傳/編輯頭照。
+- 新增主行程，可上傳主行程照片。
+- 輸入名稱搜尋目的地，透過 google map api 取得該地點詳細資訊，並顯示於畫面。
+- 搜尋到目的地資訊後，可點擊加入行程，並設定開始與結束時間。
+- 透過 google map api 計算行程之間的車程時間並顯示於畫面。
+- 可以透過 GPT input 輸入地點，讓 AI 規劃目的地（回應時間比較長）。
+- 設定連結參數，點擊 google 導航行程連結，會將當日行程地點帶到 google map，可進行導航。
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+### System Flowchart
 
-## Type Support for `.vue` Imports in TS
+![Alt text](docs/system_flowchart.png)
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+### DB ER Diagram
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+![Alt text](docs/db_erd.png)
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+### Google Login
 
-## Customize configuration
+![Alt text](docs/google_login.png)
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+### Authentication process
 
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+![Alt text](docs/authentication_process.png)
