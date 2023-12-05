@@ -1,4 +1,6 @@
-import type { IErrors } from '@/composables/validation/useFormValidation'
+export interface IErrors {
+  [propName: string]: string
+}
 
 export function resolveProps(formField: any, errors: IErrors): any {
   const commonProps = {
