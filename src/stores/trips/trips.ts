@@ -76,17 +76,16 @@ const useTripsStore = defineStore({
       // 設定 formData 資料
       ;(Object.keys(this.createData) as Array<keyof ITripParams>).forEach((key) => {
         if (this.createData) {
-          if (key === 'tripImage') {
-            const item = this.createData[key]
-            if (Array.isArray(item)) {
-              console.log('item[0]?.value.file', item[0]?.value.file)
-              const file = item[0]?.value.file
-              formatData[key] = file || null
-            }
-          } else if (key === 'start_date' || key === 'end_date') {
-            formatData[key] = formatDateToUTC(this.createData[key])
-          } else {
-            formatData[key] = this.createData[key]
+          switch (key) {
+            case 'tripImage':
+              formatData[key] = this.createData[key]
+              break
+            case 'end_date':
+            case 'start_date':
+              formatData[key] = formatDateToUTC(this.createData[key])
+              break
+            default:
+              formatData[key] = this.createData[key]
           }
         }
 

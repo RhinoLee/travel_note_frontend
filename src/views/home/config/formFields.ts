@@ -6,7 +6,7 @@ export const formFields = [
     title: '封面圖片',
     type: 'singleFile',
     placeholder: '請輸入旅程圖片',
-    initValue: [],
+    initValue: null,
     refFields: []
   },
   {

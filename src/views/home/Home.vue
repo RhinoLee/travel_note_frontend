@@ -8,10 +8,11 @@ import useTripsStore from '@/stores/trips/trips'
 import { notify } from '@kyvg/vue3-notification'
 import { CREATE_SUCCESS_MESSAGE, CREATE_FAILED_MESSAGE } from '@/common/constants'
 import { tripSchema } from '@/composables/validation/schema/tripSchema'
+import type { ITripParams } from '@/services/trips/type.ts'
 
 const tripListRef = ref<InstanceType<typeof TripList> | null>(null)
 
-async function createSubmitHandler(data: any) {
+async function createSubmitHandler(data: ITripParams) {
   // 整理 data 成 API 所需格式
   const tripsStore = useTripsStore()
   tripsStore.setCreateData(data)

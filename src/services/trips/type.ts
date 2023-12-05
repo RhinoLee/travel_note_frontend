@@ -1,10 +1,9 @@
-import type { VueUploadItem } from 'vue-upload-component'
 import type { TimeStringFormat } from '@/utils/formatDateTime'
 export interface ITripParams {
   title: string
   start_date: string
   end_date: string
-  tripImage?: VueUploadItem | null
+  tripImage: File | null
 }
 
 export interface IListParams {

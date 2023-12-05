@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useFileUpload } from '@/composables/fileUpload/useFileUpload'
-import DefaultAvatar from '@/assets/images/icon/default_avatar_icon.svg'
+import { useFileDialog, useObjectUrl } from '@vueuse/core'
+import { ref, type Ref } from 'vue'
 
 export interface Props {
-  modelValue: any[]
+  modelValue: File | null
   label: string
   fieldId: string
 }
@@ -12,33 +12,31 @@ defineProps<Props>()
 
 const emit = defineEmits(['update:modelValue', 'onClearFile'])
 
-const { previewFile, inputFile, inputFilter, upload } = useFileUpload()
+const { files, open, reset, onChange } = useFileDialog({
+  accept: 'image/*' // Set to accept only image files
+})
 
-// 當 file-upload 的值改變時處理輸入
-const handleInput = () => {
-  emit('update:modelValue', [previewFile])
-}
+const previewUrl: Ref<string | undefined> = ref()
+
+onChange((files) => {
+  const file = files ? files[0] : null
+  previewUrl.value = useObjectUrl(file).value
+  emit('update:modelValue', files ? files[0] : file)
+})
 </script>
 
 <template>
+  <label class="form-modal-label">{{ label }}</label>
   <!-- 預覽圖片區域 -->
-  <div v-if="previewFile && previewFile.blob">
-    <img :src="previewFile.blob" class="w-full max-h-[200px] object-cover object-center" />
+  <div v-if="previewUrl" class="mb-[8px]">
+    <img :src="previewUrl" class="w-full max-h-[200px] object-cover object-center" />
   </div>
-  <label class="form-modal-label" :for="fieldId">{{ label }}</label>
-  <file-upload
-    ref="upload"
-    :value="modelValue"
-    @input="handleInput"
-    @input-file="inputFile"
-    @input-filter="inputFilter"
+  <button
+    @click="open()"
+    class="ml-auto px-[20px] py-[6px] bg-[var(--main-brand-color-1)] text-white text-xs md:text-sm rounded-lg"
   >
-    <button
-      class="ml-auto px-[20px] py-[6px] bg-[var(--main-brand-color-1)] text-white text-xs md:text-sm rounded-lg"
-    >
-      上傳圖片
-    </button>
-  </file-upload>
+    上傳圖片
+  </button>
 </template>
 
 <style lang="less" scoped></style>
