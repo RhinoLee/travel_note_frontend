@@ -10,8 +10,8 @@ import type { IModalProps, IFormModalData } from './config/types'
 // 這個組件不做客製化資料處理，需要在上層組件中，自行處理資料格式
 
 const emit = defineEmits<{
-  updateSubmit: [data: IFormModalData]
-  createSubmit: [data: IFormModalData]
+  updateSubmit: [data: any]
+  createSubmit: [data: any]
 }>()
 
 const props = withDefaults(defineProps<IModalProps>(), {})
