@@ -8,7 +8,7 @@ import useTripsStore from '@/stores/trips/trips'
 import { notify } from '@kyvg/vue3-notification'
 import { CREATE_SUCCESS_MESSAGE, CREATE_FAILED_MESSAGE } from '@/common/constants'
 import { tripSchema } from '@/composables/validation/schema/tripSchema'
-import type { ITripParams } from '@/services/trips/type.ts'
+import type { ITripParams } from '@/services/trips/type'
 
 const tripListRef = ref<InstanceType<typeof TripList> | null>(null)
 
