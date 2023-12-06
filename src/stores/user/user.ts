@@ -99,12 +99,9 @@ const useUserStore = defineStore({
       const formData = new FormData()
 
       Object.keys(data).forEach((key) => {
-        if (key === 'name') {
-          formData.append(key, data[key])
-        } else if (key === 'avatar') {
-          const avatarData = data[key] ?? null
-          formData.append(key, avatarData as any)
-        }
+        // 避免 formData 把 null 轉成 'null'
+        if (data[key] === null) formData.append(key, '')
+        else formData.append(key, data[key] as any)
       })
 
       try {

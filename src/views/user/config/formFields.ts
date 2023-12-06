@@ -4,7 +4,7 @@ export const formFields = [
     title: '大頭貼',
     type: 'avatar',
     placeholder: '請選擇大頭貼',
-    initValue: [],
+    initValue: '',
     refFields: []
   },
   {

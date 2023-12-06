@@ -20,15 +20,8 @@ watch(
 
 const { formMadalRef, editClickHandler } = useFormModal()
 
-async function updateSubmitHandler(data: any) {
-  const params: IUpdateUserParams = { name: data.name, avatar: null }
-  if (typeof data.avatar[0] === 'string') {
-    params.avatar = data.avatar[0]
-  } else if (typeof data.avatar[0] === 'object') {
-    params.avatar = data.avatar[0]?.value.file
-  }
-
-  const result = await userStore.updateUserInfoAction(params)
+async function updateSubmitHandler(data: IUpdateUserParams) {
+  const result = await userStore.updateUserInfoAction(data)
   // 關閉表單
   if (result.success) formMadalRef.value?.setModalVisible()
 }

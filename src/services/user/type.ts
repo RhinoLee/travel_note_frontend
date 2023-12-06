@@ -17,5 +17,6 @@ export interface ILoginParams {
 
 export interface IUpdateUserParams {
   name: string
-  avatar: string | null | VueUploadItem
+  avatar: File | string | null
+  [key: string]: string | File | null
 }

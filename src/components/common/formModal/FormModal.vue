@@ -59,13 +59,14 @@ function setModalVisible(isCreate: boolean = true, itemData: any = {}) {
   if (!isCreate) {
     buttonText.value = '更新'
     for (const key in formData) {
+      formData[key] = itemData[key]
       // image 類型如果是 null 要轉換成 ['']，給 vue-upload-component 做 v-model 綁定
-      if (key === 'avatar') {
-        if (!Array.isArray(itemData[key])) itemData[key] = [itemData[key]]
-        formData[key] = itemData[key][0] ? itemData[key] : ['']
-      } else {
-        formData[key] = itemData[key]
-      }
+      // if (key === 'avatar') {
+      //   if (!Array.isArray(itemData[key])) itemData[key] = [itemData[key]]
+      //   formData[key] = itemData[key][0] ? itemData[key] : ['']
+      // } else {
+      //   formData[key] = itemData[key]
+      // }
     }
 
     editData.value = itemData
@@ -81,7 +82,7 @@ function setModalVisible(isCreate: boolean = true, itemData: any = {}) {
 }
 
 function clearFile(prop: string) {
-  formData[prop] = []
+  formData[prop] = null
 }
 
 // modal submit

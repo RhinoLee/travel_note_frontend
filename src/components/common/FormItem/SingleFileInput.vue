@@ -10,7 +10,8 @@ export interface Props {
 
 defineProps<Props>()
 
-const emit = defineEmits(['update:modelValue', 'onClearFile'])
+// todo -> 'onClearFile'
+const emit = defineEmits(['update:modelValue'])
 
 const { files, open, reset, onChange } = useFileDialog({
   accept: 'image/*' // Set to accept only image files
